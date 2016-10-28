@@ -1,0 +1,27 @@
+{
+  "name": "Sledgehammer",
+  "description": "The better, faster, more powerful banhammer.",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "author": "Mackan <mackan@discorddungeons.me>",
+  "contributors": [
+    {
+      "name": "TheConceptionist",
+      "email": "concept@discorddungeons.me"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sven65/Sledgehammer"
+  },
+  "bugs": {
+    "url": "https://github.com/Sven65/Sledgehammer/issues"
+  },
+  "scripts": {
+    "start": "node Sledgehammer/main.js"
+  },
+  "main": "Sledgehammer/main.js",
+  "dependencies": {
+    "discord.js": "^10.0.1"
+  }
+}
