@@ -5,11 +5,14 @@
 
 
 module.exports = {
-	List: ['ban'],
+	List: ['kick'],
 
-	ban: {
+	kick: {
 		Execute: (Args, message) => {
 			
-		}
+		},
+		Cooldown: 10,
+		Description: "Kicks a member.",
+		Usage: "@user"
 	}
 }
