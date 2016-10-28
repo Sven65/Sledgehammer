@@ -5,6 +5,6 @@ The better, faster, more powerful banhammer.
 Sledgehammer is a moderation bot for the chat application Discord.
 The base code of Sledgehammer is contributed by:
 
-@Sven65 / @Mackan90096
-@TheConceptionist
-@sylvexn
+`@Sven65 / @Mackan90096`
+`@TheConceptionist`
+`@sylvexn`
