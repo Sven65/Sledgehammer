@@ -47,12 +47,32 @@ let Utils = {
 				});
 			});
 		});
+	},
+	Clean: (message, Count) => {
+		return new Promise((resolve, reject) => {
+			let i = 0;
+			message.channel.fetchMessages({limit: Count}).then((messages) => {
+				messages.map((ms) => {
+					ms.delete().then(() => {
+						i++;
+						if(i === Count || i === messages.size){
+							resolve(i);
+						}
+					}).catch((e) => {
+						i++;
+						if(i === Count || i === messages.size){
+							resolve(i);
+						}
+					});	
+				});
+			});
+		});
 	}
 }
 
 module.exports = {
 	Metadata: {
-		List: ['kick', 'ban'],
+		List: ['kick', 'ban', 'clean'],
 		Name: "Admin Commands",
 		Description: "Administrative commands"
 	},
@@ -123,5 +143,31 @@ module.exports = {
 		Cooldown: 5,
 		Description: "Bans members from the server.",
 		Usage: "`@user` `[@user]` `[@user]...`"
+	},
+
+	clean: {
+		Execute: (Args, message) => {
+			let Member = message.guild.fetchMember(message.author);
+			let purgeCount = 10;
+			if(Args.length >= 1){
+				purgeCount = parseInt(Args[0]) || 10;
+			}
+			if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
+				if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("MANAGE_MESSAGES")){
+					let toSend = "";
+					Utils.Clean(message, purgeCount).then((Purged) => {
+						toSend = `Purged ${Purged.formatNumber()} messages in ${message.channel}.`;
+						message.channel.sendMessage(toSend);
+					});
+				}else{
+					message.channel.sendMessage(`:no_entry_sign: I can't do that, ${message.author.username}, I'm missing the permission to manage messages.`);
+				}
+			}else{
+				message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to manage messages.`);
+			}
+		},
+		Cooldown: 5,
+		Description: "Purges messages",
+		Usage: "`[amount]`"
 	}
 }
