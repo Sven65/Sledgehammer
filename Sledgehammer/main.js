@@ -93,7 +93,7 @@ Sledgehammer.on("message", (message) => {
 					let time = Math.round(((last + Utils.resolveCooldown(Command) * 1000) - now) / 1000);
 					message.channel.sendMessage(`You need to calm down, ${message.author.username}. :hourglass: ${time} seconds`);
 				}else{
-					Utils.resolveCommand(Command).Execute(Args, message);
+					Utils.resolveCommand(Command).Execute(Args.shift(), message);
 					Cooldown.firstTime[Command][message.author.id] = true;
 					Cooldown.lastExecTime[Command][message.author.id] = now;
 				}
