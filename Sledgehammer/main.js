@@ -12,6 +12,18 @@ let Cooldown = {
 	firstTime: {}
 };
 
+String.prototype.capFirst = function(){
+	return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
+String.prototype.formatNumber = function(){
+	return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+}
+
+Number.prototype.formatNumber = function(){
+	return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+}
+
 
 const Utils = {
 	loadCommands: () => {
@@ -21,7 +33,7 @@ const Utils = {
 				if(File.endsWith('.js')){
 					try{
 						Commands.all[File.slice(0, -3)] = require(__dirname+'/Commands/'+File);
-						for(let Command of Commands.all[File.slice(0, -3)].List){
+						for(let Command of Commands.all[File.slice(0, -3)].Metadata.List){
 							Commands.list[Command] = File.slice(0, -3);
 						}
 					}catch(e){
@@ -93,7 +105,8 @@ Sledgehammer.on("message", (message) => {
 					let time = Math.round(((last + Utils.resolveCooldown(Command) * 1000) - now) / 1000);
 					message.channel.sendMessage(`You need to calm down, ${message.author.username}. :hourglass: ${time} seconds`);
 				}else{
-					Utils.resolveCommand(Command).Execute(Args.shift(), message);
+					Args.shift();
+					Utils.resolveCommand(Command).Execute(Args, message);
 					Cooldown.firstTime[Command][message.author.id] = true;
 					Cooldown.lastExecTime[Command][message.author.id] = now;
 				}

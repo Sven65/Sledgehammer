@@ -1,8 +1,17 @@
+/*
+	General.js
+	General Commands for Sledgehammer
+*/
+
 module.exports = {
-	List: ["ping"],
+	Metadata: {
+		List: ["ping", "help"],
+		Name: "General Commands",
+		Description: "General commands"
+	},
 
 	ping: {
-		Execute: (args, message) => {
+		Execute: (Args, message) => {
 			let n = Date.now();
 			let id = message.author.id;
 			message.reply(`:hourglass:`).then(m => {
@@ -10,8 +19,61 @@ module.exports = {
 				m.edit(`<@${message.author.id}> :hourglass: ${time} seconds.`);
 			});
 		},
-		Description: "Pings",
+		Description: "Sends you information about the response time.",
 		Cooldown: 10,
 		Usage: ""
+	},
+
+	help: {
+		Execute: (Args, message) => {
+			let prefix = "=>";
+			if(Args.length >= 1){
+				let Command = Args[0].toLowerCase();
+				if(Command in Commands.list){
+					let helpMsg = `__**${Command.capFirst()}**__\n\n`;
+					helpMsg += Commands.all[Commands.list[Command]][Command].Description+"\n\n";
+
+					helpMsg += `**Usage: **\`${prefix}${Command.capFirst()}\` ${Commands.all[Commands.list[Command]][Command].Usage}\n\n`;
+					helpMsg += `**Cooldown: ** ${Commands.all[Commands.list[Command]][Command].Cooldown.formatNumber()} seconds.`;
+
+					message.channel.sendMessage(helpMsg);
+				}
+			}else{	
+				let msg = `Okay, ${message.author.username}, check your messages.`;
+				let x = {};
+
+				let m = "```ini\n";
+				Object.keys(Commands.all).map((a) => {
+					if(x[a] === undefined){
+						x[a] = [];
+					}
+					Commands.all[a].Metadata.List.map((b) => {
+						if(Commands.all[a][b] !== undefined){
+							if(!Commands.all[a][b].hasOwnProperty("unlisted")){
+								x[a].push(`${b}`);
+							}
+						}
+					})
+				});
+
+				Object.keys(x).map((a) => {
+					let b = `${Commands.all[a].Metadata.Name}`
+					m += `[${b}]\n${x[a].join(", ")}\n`;
+				});
+
+				m += "```";
+				
+				message.channel.sendMessage(msg).then(() => {
+					message.author.sendMessage(m).catch((e) => {
+						console.dir(e);
+					});
+				}).catch((e) => {
+					console.dir(e);
+				})
+			}
+		},
+		Description: "Sends a list of the commands that can be used.",
+		Cooldown: 10,
+		Usage: "`[command]`"
 	}
 }

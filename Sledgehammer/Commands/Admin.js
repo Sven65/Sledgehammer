@@ -25,11 +25,37 @@ let Utils = {
 				});
 			});
 		});
+	},
+	Ban: (Mentions, message) => {
+		return new Promise((resolve, reject) => {
+			let Banned = [];
+			let i = 0;
+			Mentions.map((user) => {
+				message.guild.fetchMember(user).then((gUser) => {
+					gUser.ban().then(() => {
+						Banned.push(`${user.username} (${user.id})`);
+						i++;
+						if(i === Mentions.size){
+							resolve(Banned);
+						}
+					}).catch((e) => {
+						i++;
+						if(i === Mentions.size){
+							resolve(Banned);
+						}
+					});
+				});
+			});
+		});
 	}
 }
 
 module.exports = {
-	List: ['kick'],
+	Metadata: {
+		List: ['kick', 'ban'],
+		Name: "Admin Commands",
+		Description: "Administrative commands"
+	},
 
 	kick: {
 		Execute: (Args, message) => {
@@ -61,7 +87,41 @@ module.exports = {
 			}
 		},
 		Cooldown: 5,
-		Description: "Kicks a member.",
-		Usage: "@user"
+		Description: "Kicks members from the server.",
+		Usage: "`@user` `[@user]` `[@user]...`"
+	},
+
+	ban: {
+		Execute: (Args, message) => {
+			let Member = message.guild.fetchMember(message.author);
+			if(Args.length >= 1){
+				let Mentions = message.mentions.users;
+				if(Mentions.size >= 1){
+					if(message.channel.permissionsFor(message.author).hasPermission("BAN_MEMBERS")){
+						if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("BAN_MEMBERS")){
+							let toSend = "";
+							Utils.Ban(Mentions, message).then((Banned) => {
+								let and = "";
+								toSend = `Banned ${Banned.length>1?'users':'user'}`;
+								if(Banned.length >= 2){
+									and = Banned.pop();
+								}
+								toSend += ` ${Banned.join(',')} ${and.length>0?'and':''} ${and.length>0?and:''}`;
+								message.channel.sendMessage(toSend);
+							});
+						}else{
+							message.channel.sendMessage(`:no_entry_sign: I can't do that, ${message.author.username}, I'm missing the permission to ban members.`);
+						}
+					}else{
+						message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to ban members.`);
+					}
+				}else{
+					message.channel.sendMessage(`I can't do that, ${message.author.username},`)
+				}
+			}
+		},
+		Cooldown: 5,
+		Description: "Bans members from the server.",
+		Usage: "`@user` `[@user]` `[@user]...`"
 	}
 }
