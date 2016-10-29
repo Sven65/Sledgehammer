@@ -42,8 +42,8 @@ ____
 	- Basic
    		- Mute Timer
    		- Softban (ban/unban)
-  		- Kick
-   		- Ban
+  		- Kick ✔
+   		- Ban ✔
    		- Give/Take Roles by name not ID
    		- ???
 	- Advanced
