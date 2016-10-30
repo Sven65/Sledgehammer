@@ -1,4 +1,8 @@
 {
 	"token": "",
-	"prefix": "=>"
+	"prefix": "=>",
+	"database": {
+		"username": "",
+		"password": ""
+	}
 }

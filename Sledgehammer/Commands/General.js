@@ -49,7 +49,7 @@ module.exports = {
 					}
 					Commands.all[a].Metadata.List.map((b) => {
 						if(Commands.all[a][b] !== undefined){
-							if(!Commands.all[a][b].hasOwnProperty("unlisted")){
+							if(!Commands.all[a][b].hasOwnProperty("Unlisted")){
 								x[a].push(`${b}`);
 							}
 						}

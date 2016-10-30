@@ -22,6 +22,7 @@
   },
   "main": "Sledgehammer/main.js",
   "dependencies": {
-    "discord.js": "^10.0.1"
+    "discord.js": "^10.0.1",
+    "rethinkdb": "^2.3.3"
   }
 }
