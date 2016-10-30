@@ -38,4 +38,14 @@ module.exports = class Server{
 	get modlog(){
 		return Sledgehammer.rdb.r.table("Servers").get(this.id)("modlog").default(null).run(Sledgehammer.rdb.conn)
 	}
+
+	sendModlog(message, text){
+		this.modlog.then((l) => {
+			if(l !== null){
+				message.guild.channels.find("id", l).sendMessage(text);
+			}else{
+				message.channel.sendMessage(text);
+			}
+		});
+	}
 }

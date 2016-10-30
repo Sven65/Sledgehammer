@@ -110,6 +110,7 @@ Sledgehammer.on("message", (message) => {
 	s.exists.then((ex) => {
 
 		let Args = message.content.replace(/\s\s+/g, " ").split(" ");
+		let Time = new Date().toUTCString();
 
 		if(!ex){
 			s.create();
@@ -122,8 +123,15 @@ Sledgehammer.on("message", (message) => {
 			}
 
 			if(message.content.replace(/\s\s+/g, " ").containsArray(list)){
-				if(!Args[0].startsWith(Config.prefix)){
+				if(Args[0].toLowerCase() === Config.prefix+"whitelist"){
+					if(!message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
+						message.delete();
+						s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
+						return;
+					}
+				}else{
 					message.delete();
+					s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
 					return;
 				}
 			}
@@ -160,11 +168,6 @@ Sledgehammer.on("message", (message) => {
 					}catch(e){
 						console.log(e);
 					};
-				}else{
-					if(message.content.replace(/\s\s+/g, " ").containsArray(list)){
-						message.delete();
-						return;
-					}
 				}
 			}
 		});
