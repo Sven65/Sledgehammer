@@ -20,9 +20,9 @@ ____
 
 - Auto Mod
 	- Filtering
-   		- Links
-   		- Words
-   		- Black/Whitelisting
+   		- Links 
+   		- Words ✔
+   		- Black/Whitelisting ✔
 	- Channel Filtering
     	- Channel Ignoring
    		- Channel Individual Setup

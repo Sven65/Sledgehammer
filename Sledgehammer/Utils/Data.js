@@ -48,4 +48,23 @@ module.exports = class Server{
 			}
 		});
 	}
+
+	linkFilterAdd(channel, type){
+		let data = {};
+		data[channel] = {type: type};
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({linkFilter: data}).run(Sledgehammer.rdb.conn);
+	}
+
+	removeLinkFilter(channel){
+		return r.db('Sledgehammer').table('Servers').get('241593567485755392').replace(r.row.without({linkFilter: channel})).run(Sledgehammer.rdb.conn);
+	}
+
+	linkFilter(channel){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id)("linkFilter")(channel).default(null).run(Sledgehammer.rdb.conn);
+	}
+
+	get all(){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).default(null).run(Sledgehammer.rdb.conn);
+	}
+
 }

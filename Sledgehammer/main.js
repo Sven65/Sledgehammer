@@ -47,7 +47,6 @@ String.prototype.containsArray = function(array){
 			}
 		}else{
 			let p = new RegExp(a.replace(/\//g, ""), "gi");
-			console.log(p);
 			if(p.test(this)){
 				x = true;
 			}
@@ -71,8 +70,9 @@ const Utils = {
 							}
 						}
 					}catch(e){
+						console.dir(e);
 						reject(e);
-					};
+					}
 				}
 			}
 			resolve();
@@ -114,7 +114,9 @@ rethink.connect({host: 'localhost', port: 28015, user: Config.database.user, pas
 	}).catch((e) => {
 		throw e;
 	})
-});
+}).catch((e) => {
+	throw e;
+})
 
 Sledgehammer.on("ready", () => {
 	console.log("Sledgehammer ready to hammer.");
@@ -125,6 +127,8 @@ Sledgehammer.on("message", (message) => {
 	if(message.author === Sledgehammer.user) return;
 
 	if(message.channel.type !== "text"){
+		message.channel.sendMessage(`Sorry, I don't respond to private messages.`);
+		return;
 		message.guild = {id: "0"};
 	}
 	let s = new Server(message.guild.id); // Make a new 'Server' class mapped to the current server ID
@@ -198,4 +202,8 @@ Sledgehammer.on("message", (message) => {
 	}).catch((e) => {
 		console.dir(e);
 	});
+});
+
+process.on("uncaughtException", (e) => {
+	console.dir(e.stack);
 });

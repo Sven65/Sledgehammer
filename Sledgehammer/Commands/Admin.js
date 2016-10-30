@@ -72,7 +72,7 @@ let Utils = {
 
 module.exports = {
 	Metadata: {
-		List: ['kick', 'ban', 'clean', 'blacklist', 'whitelist', 'modlog'],
+		List: ['kick', 'ban', 'clean', 'blacklist', 'whitelist'],
 		Name: "Admin Commands",
 		Description: "Administrative commands"
 	},
@@ -206,7 +206,7 @@ module.exports = {
 		},
 		Cooldown: 5,
 		Description: "Adds a word or phrase to the blacklist.",
-		Usage: "``word``"
+		Usage: "``Word/RegExp``"
 	},
 
 	whitelist: {
@@ -233,42 +233,6 @@ module.exports = {
 		},
 		Cooldown: 5,
 		Description: "Removes a word or phrase from the blacklist.",
-		Usage: "``word``"
-	},
-
-	modlog: {
-		Execute: (Args, message) => {
-			if(Args.length >= 1){
-				let Mentions = message.mentions.channels;
-				if(Mentions.size >= 1){
-					if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_CHANNELS")){
-						if(message.guild.channels.find("id", Mentions.first().id).permissionsFor(Sledgehammer.user).hasPermission("SEND_MESSAGES")){
-							if(message.guild.channels.find("id", Mentions.first().id).permissionsFor(Sledgehammer.user).hasPermission("READ_MESSAGES")){
-								let server = new Server(message.guild.id);
-								server.setModlog(Mentions.first().id).then(() => {
-									message.channel.sendMessage(`:white_check_mark: Modlog channel set to <#${Mentions.first().id}>`)
-								}).catch((e) => {
-									message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
-									console.log(e);
-								});
-							}else{
-								message.channel.sendMessage(`:no_entry_sign: I can't do that, ${message.author.username}, I'm missing the permission to read messages in that channel.`);
-							}
-						}else{
-							message.channel.sendMessage(`:no_entry_sign: I can't do that, ${message.author.username}, I'm missing the permission to send messages in that channel.`);
-						}
-					}else{
-						message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to manage channels.`);
-					}
-				}else{
-					message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
-				}
-			}else{
-				message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
-			}
-		},
-		Cooldown: 5,
-		Description: "Changes the channel Sledgehammer outputs messages in",
-		Usage: "``#channel``"
+		Usage: "``Word/RegExp``"
 	}
 }
