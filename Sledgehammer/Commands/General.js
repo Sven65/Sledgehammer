@@ -5,7 +5,7 @@
 
 module.exports = {
 	Metadata: {
-		List: ["ping", "help"],
+		List: ["ping", "help", "invite"],
 		Name: "General Commands",
 		Description: "General commands"
 	},
@@ -75,5 +75,14 @@ module.exports = {
 		Description: "Sends a list of the commands that can be used.",
 		Cooldown: 10,
 		Usage: "`[command]`"
+	},
+
+	invite: {
+		Execute: (Args, message) => {
+			message.channel.sendMessage("You can add Sledgehammer here; https://discordapp.com/oauth2/authorize?client_id=241617911976951808&scope=bot&permissions=2080484415");
+		},
+		Description: "Sends the invite for Sledgehammer",
+		Cooldown: 10,
+		Usage: ""
 	}
 }

@@ -27,12 +27,32 @@ Number.prototype.formatNumber = function(){
 	return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
 
+String.prototype.escapeRegExp = function(){
+    return this.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
 String.prototype.containsArray = function(array){
 	let x = false;
+	let valid = true;
 	array.map((a) => {
-		if(this.includes(a)){
-			x = true;
+		try{
+			let dd = new RegExp(a.replace(/\//g, ""));
+		}catch(e){
+			valid = false;
 		}
+
+		if(!valid){
+			if(this.includes(a)){
+				x = true;
+			}
+		}else{
+			let p = new RegExp(a.replace(/\//g, ""), "gi");
+			console.log(p);
+			if(p.test(this)){
+				x = true;
+			}
+		}
+
 	});
 	return x;
 }
@@ -45,8 +65,10 @@ const Utils = {
 				if(File.endsWith('.js')){
 					try{
 						Commands.all[File.slice(0, -3)] = require(__dirname+'/Commands/'+File);
-						for(let Command of Commands.all[File.slice(0, -3)].Metadata.List){
-							Commands.list[Command] = File.slice(0, -3);
+						if(Commands.all[File.slice(0, -3)].Metadata !== undefined){
+							for(let Command of Commands.all[File.slice(0, -3)].Metadata.List){
+								Commands.list[Command] = File.slice(0, -3);
+							}
 						}
 					}catch(e){
 						reject(e);
@@ -102,7 +124,7 @@ Sledgehammer.on("message", (message) => {
 
 	if(message.author === Sledgehammer.user) return;
 
-	if(message.channel.type === "dm"){
+	if(message.channel.type !== "text"){
 		message.guild = {id: "0"};
 	}
 	let s = new Server(message.guild.id); // Make a new 'Server' class mapped to the current server ID
@@ -170,6 +192,10 @@ Sledgehammer.on("message", (message) => {
 					};
 				}
 			}
+		}).catch((e) => {
+			console.dir(e);
 		});
-	})
+	}).catch((e) => {
+		console.dir(e);
+	});
 });
