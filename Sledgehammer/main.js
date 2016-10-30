@@ -108,6 +108,9 @@ Sledgehammer.on("message", (message) => {
 	let s = new Server(message.guild.id); // Make a new 'Server' class mapped to the current server ID
 	
 	s.exists.then((ex) => {
+
+		let Args = message.content.replace(/\s\s+/g, " ").split(" ");
+
 		if(!ex){
 			s.create();
 		}
@@ -119,12 +122,13 @@ Sledgehammer.on("message", (message) => {
 			}
 
 			if(message.content.replace(/\s\s+/g, " ").containsArray(list)){
-				message.delete();
-				return;
+				if(!Args[0].startsWith(Config.prefix)){
+					message.delete();
+					return;
+				}
 			}
 
 			if(message.author.bot) return;
-			let Args = message.content.replace(/\s\s+/g, " ").split(" ");
 
 			if(Args[0].startsWith(Config.prefix)){
 				let Command = Args[0].replace(Config.prefix, "").toLowerCase();
@@ -156,6 +160,11 @@ Sledgehammer.on("message", (message) => {
 					}catch(e){
 						console.log(e);
 					};
+				}else{
+					if(message.content.replace(/\s\s+/g, " ").containsArray(list)){
+						message.delete();
+						return;
+					}
 				}
 			}
 		});

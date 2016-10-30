@@ -72,7 +72,7 @@ let Utils = {
 
 module.exports = {
 	Metadata: {
-		List: ['kick', 'ban', 'clean', 'blacklist', 'modlog'],
+		List: ['kick', 'ban', 'clean', 'blacklist', 'whitelist', 'modlog'],
 		Name: "Admin Commands",
 		Description: "Administrative commands"
 	},
@@ -184,7 +184,6 @@ module.exports = {
 
 	blacklist: {
 		Execute: (Args, message) => {
-			let Member = message.guild.fetchMember(message.author);
 			if(Args.length >= 1){
 				if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
 					if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("MANAGE_MESSAGES")){
@@ -207,6 +206,33 @@ module.exports = {
 		},
 		Cooldown: 5,
 		Description: "Adds a word or phrase to the blacklist.",
+		Usage: "``word``"
+	},
+
+	whitelist: {
+		Execute: (Args, message) => {
+			if(Args.length >= 1){
+				if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
+					if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("MANAGE_MESSAGES")){
+						let server = new Server(message.guild.id);
+						server.removeBlacklist(Args.join(" ")).then(() => {
+							message.channel.sendMessage(`:white_check_mark: Removed \`${Args.join(" ")}\` from the blacklist.`);
+						}).catch((e) => {
+							message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+						});
+					}else{
+						message.channel.sendMessage(`:no_entry_sign: I can't do that, ${message.author.username}, I'm missing the permission to manage messages.`);
+					}
+				}else{
+					message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to manage messages.`);
+				}
+			}else{
+
+				message.channel.sendMessage(`:no_entry_sign: Not enough arguments, ${message.author.username}.`);
+			}
+		},
+		Cooldown: 5,
+		Description: "Removes a word or phrase from the blacklist.",
 		Usage: "``word``"
 	},
 

@@ -25,8 +25,10 @@ module.exports = class Server{
 		}).run(Sledgehammer.rdb.conn);
 	}
 
-	set removeBlacklist(word){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id)("Blacklist")(word).run(Sledgehammer.rdb.conn);
+	removeBlacklist(word){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			Blacklist: Sledgehammer.rdb.r.row("Blacklist").difference([word])
+		}).run(Sledgehammer.rdb.conn);
 	}
 
 	setModlog(channel){
