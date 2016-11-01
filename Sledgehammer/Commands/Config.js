@@ -89,6 +89,12 @@ module.exports = {
 						}).catch((e) => {
 							message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
 						});
+					}else if(Args[0].toLowerCase() === 'none'){
+						s.removeLinkFilter(message.channel.id).then(() => {
+							message.channel.sendMessage(`:white_check_mark: No longer filtering links in ${message.channel}.`);
+						}).catch((e) => {
+							message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+						});
 					}else{
 						s.linkFilterAdd(message.channel.id, 'all').then(() => {
 							message.channel.sendMessage(`:white_check_mark: Now filtering all links in ${message.channel}.`);
@@ -111,15 +117,12 @@ module.exports = {
 			let s = new Server(message.guild.id);
 			s.all.then((server) => {
 				if(server !== null){
-					let toSend = `__**> ${message.guild.name} configuration ❮**__`;
+					let toSend = `__**❯ ${message.guild.name} configuration ❮**__`;
 					if(server.Blacklist !== null && server.Blacklist !== undefined){
-						toSend += `> Blacklist: ${server.Blacklist.join(', ')} ❮`;
+						toSend += `\n__**❯ Blacklist: ${server.Blacklist.join(', ')} ❮**__`;
 					}
 					if(server.modlog !== null && server.modlog !== undefined){
-						let modlog = message.guild.channels.find("id", server.modlog);
-						if(modlog !== null){
-							toSend += `\nModlog channel: #${modlog.name}`;
-						}
+						toSend += `\n❯__**Modlog channel: <#${server.modlog}>**__❮`;
 					}
 					toSend += "```";
 					message.channel.sendMessage(toSend);

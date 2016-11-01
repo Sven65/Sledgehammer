@@ -122,6 +122,87 @@ Sledgehammer.on("ready", () => {
 	console.log("Sledgehammer ready to hammer.");
 });
 
+Sledgehammer.on('messageUpdate', (oldMessage, newMessage) => {
+	if(newMessage.author === Sledgehammer.user) return;
+
+	if(newMessage.channel.type !== "text"){
+		return;
+	}
+	let s = new Server(newMessage.guild.id); // Make a new 'Server' class mapped to the current server ID
+	
+	s.exists.then((ex) => {
+
+		let Args = newMessage.content.replace(/\s\s+/g, " ").split(" ");
+		let Time = new Date().toUTCString();
+
+		if(!ex){
+			s.create();
+		}
+
+		s.blacklist.then((list) => { // Get the list of blacklisted words
+
+			if(list === null){
+				list = [];
+			}
+
+			if(newMessage.content.replace(/\s\s+/g, " ").containsArray(list)){
+				newMessage.delete();
+				s.sendModlog(message, `[${Time}] Removed msessage from ${newMessage.author.username} (${newMessage.author.id})`)
+				return;
+			}
+
+			s.linkFilter(newMessage.channel.id).then((filter) => {
+				if(filter !== null){
+					if(!newMessage.channel.permissionsFor(newMessage.author).hasPermission("EMBED_LINKS")){
+						if(filter.type === "all"){
+							let q = new RegExp(
+							"^" +
+							// protocol identifier
+							"(?:(?:https?|ftp)://)" +
+							// user:pass authentication
+							"(?:\\S+(?::\\S*)?@)?" +
+							"(?:" +
+							// IP address exclusion
+							// private & local networks
+							"(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
+							"(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
+							"(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
+							// IP address dotted notation octets
+							// excludes loopback network 0.0.0.0
+							// excludes reserved space >= 224.0.0.0
+							// excludes network & broacast addresses
+							// (first & last IP address of each class)
+							"(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
+							"(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
+							"(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
+							"|" +
+							// host name
+							"(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
+							// domain name
+							"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
+							// TLD identifier
+							"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
+							// TLD may end with dot
+							"\\.?" +
+							")" +
+							// port number
+							"(?::\\d{2,5})?" +
+							// resource path
+							"(?:[/?#]\\S*)?" +
+							"$", "i"
+							);
+							if(q.test(newMessage.content)){
+								newMessage.delete();
+								s.sendModlog(`Removed link from ${newMessage.author.username} in ${newMessage.channel}`);
+							}
+						}
+					}
+				}
+			});
+		});
+	});
+});
+
 Sledgehammer.on("message", (message) => {
 
 	if(message.author === Sledgehammer.user) return;
@@ -161,6 +242,55 @@ Sledgehammer.on("message", (message) => {
 					return;
 				}
 			}
+
+			s.linkFilter(message.channel.id).then((filter) => {
+				if(filter !== null){
+					if(!message.channel.permissionsFor(message.author).hasPermission("EMBED_LINKS")){
+						if(filter.type === "all"){
+							let q = new RegExp(
+							"^" +
+							// protocol identifier
+							"(?:(?:https?|ftp)://)" +
+							// user:pass authentication
+							"(?:\\S+(?::\\S*)?@)?" +
+							"(?:" +
+							// IP address exclusion
+							// private & local networks
+							"(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
+							"(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
+							"(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
+							// IP address dotted notation octets
+							// excludes loopback network 0.0.0.0
+							// excludes reserved space >= 224.0.0.0
+							// excludes network & broacast addresses
+							// (first & last IP address of each class)
+							"(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
+							"(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
+							"(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
+							"|" +
+							// host name
+							"(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
+							// domain name
+							"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
+							// TLD identifier
+							"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
+							// TLD may end with dot
+							"\\.?" +
+							")" +
+							// port number
+							"(?::\\d{2,5})?" +
+							// resource path
+							"(?:[/?#]\\S*)?" +
+							"$", "i"
+							);
+							if(q.test(message.content)){
+								message.delete();
+								s.sendModlog(`Removed link from ${message.author.username} in ${message.channel}`);
+							}
+						}
+					}
+				}
+			});
 
 			if(message.author.bot) return;
 

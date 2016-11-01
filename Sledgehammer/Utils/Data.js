@@ -56,7 +56,7 @@ module.exports = class Server{
 	}
 
 	removeLinkFilter(channel){
-		return r.db('Sledgehammer').table('Servers').get('241593567485755392').replace(r.row.without({linkFilter: channel})).run(Sledgehammer.rdb.conn);
+		return Sledgehammer.rdb.r.db('Sledgehammer').table('Servers').get('241593567485755392').replace(Sledgehammer.rdb.r.row.without({linkFilter: channel})).run(Sledgehammer.rdb.conn);
 	}
 
 	linkFilter(channel){
