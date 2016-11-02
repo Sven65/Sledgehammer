@@ -183,8 +183,6 @@ module.exports = {
 						onJoin, onLeave
 					- Moderation events:
 						onKick, onBan, onUnban
-					- Server emojis
-						onEmojiCreate, onEmojiDelete, onEmojiUpdate
 					- User events
 						onMemberUpdate, onUserUpdate
 					- Server events
