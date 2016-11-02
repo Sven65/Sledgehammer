@@ -1,5 +1,6 @@
 const Discord = require("Discord.js");
 const Config = require("./Config.json");
+const Token = require("./token.json").token;
 const fs = require("fs");
 const rethink = require('rethinkdb');
 
@@ -110,7 +111,7 @@ rethink.connect({host: 'localhost', port: 28015, user: Config.database.user, pas
 	Utils.loadCommands().then(() => { // Load the commands and wait for it to finish
 		global.Commands = Commands;
 		global.Sledgehammer = Sledgehammer;
-		Sledgehammer.login(Config.token).then(() => { // Login
+		Sledgehammer.login(Token).then(() => { // Login
 			// Logged in
 			console.log("Logged in");
 		}).catch((e) => {
