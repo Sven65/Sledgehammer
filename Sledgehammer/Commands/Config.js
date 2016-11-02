@@ -5,7 +5,7 @@
 
 module.exports = {
 	Metadata: {
-		List: ['modlog', 'linkfilter', 'config'],
+		List: ['modlog', 'linkfilter', 'config', 'setprefix'],
 		Name: "Configuration Commands",
 		Description: "Configurations"
 	},
@@ -119,12 +119,19 @@ module.exports = {
 				if(server !== null){
 					let toSend = `__**❯ ${message.guild.name} configuration ❮**__`;
 					if(server.Blacklist !== null && server.Blacklist !== undefined){
-						toSend += `\n__**❯ Blacklist: ${server.Blacklist.join(', ')} ❮**__`;
+						toSend += `\n**❯ Blacklist: ${server.Blacklist.join(', ')} ❮**`;
 					}
 					if(server.modlog !== null && server.modlog !== undefined){
-						toSend += `\n❯__**Modlog channel: <#${server.modlog}>**__❮`;
+						toSend += `\n**❯ Modlog channel: <#${server.modlog}>❮ **`;
 					}
-					toSend += "```";
+					if(server.linkFilter !== undefined && server.linkFilter !== null){
+						for(let filter in server.linkFilter){
+							toSend += `\n**❯ Link filtering in <#${filter}>: ${server.linkFilter[filter].type} ❮**`;
+						}
+					}
+					if(server.prefix !== null){
+						toSend += `\n**❯ Prefix: ${server.prefix} ❮**`;
+					}
 					message.channel.sendMessage(toSend);
 				}else{
 					message.channel.sendMessage(`:x: This server doesn't have a configuration.`);
@@ -136,5 +143,54 @@ module.exports = {
 		Cooldown: 5,
 		Description: "Shows the configuration of the current server.",
 		Usage: ""
+	},
+
+	setprefix: {
+		Execute: (Args, message) => {
+			let s = new Server(message.guild.id);
+			if(Args.length >= 1){
+				message.guild.fetchMember(message.author).then((user) => {
+					if(user.roles.exists("name", "Sledgehammer Configurator")){
+						let prefix = Args.join(" ");
+						if(prefix.actualLength > 16){
+							message.channel.sendMessage(`:no_entry_sign: Sorry, ${message.author.username}, but a prefix can be a maximum of 16 characters.`);
+						}else{
+							s.setPrefix(prefix).then(() => {
+								message.channel.sendMessage(`:white_check_mark: Prefix for ${message.guild.name} set to \`${prefix}\``);
+							}).catch((e) => {
+								message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+							});
+						}
+					}else{
+						message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You need a role called \`Sledgehammer Configurator\`.`);
+					}
+				});
+			}else{
+				message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+			}
+		}
+	},
+
+	edit: {
+		Execute: (Args, message) => {
+			/*
+				Command to edit event responses
+				Valid events are
+					- Join Events: 
+						onJoin, onLeave
+					- Moderation events:
+						onKick, onBan, onUnban
+					- Server emojis
+						onEmojiCreate, onEmojiDelete, onEmojiUpdate
+					- User events
+						onMemberUpdate, onUserUpdate
+					- Server events
+						onServerUpdate
+					- Message events
+						onMessageDelete, onMessageUpdate
+					- Role Events
+						onRoleCreate, onRoleDelete, onRoleUpdate
+			*/
+		}
 	}
 }

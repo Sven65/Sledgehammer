@@ -4,7 +4,7 @@
 */
 
 let Utils = {
-	Kick: (Mentions, message) => {
+	Kick: (Mentions, message) => { // Function for kicking users
 		return new Promise((resolve, reject) => {
 			let Kicked = [];
 			let i = 0;
@@ -26,7 +26,7 @@ let Utils = {
 			});
 		});
 	},
-	Ban: (Mentions, message) => {
+	Ban: (Mentions, message) => { // Function for banning users
 		return new Promise((resolve, reject) => {
 			let Banned = [];
 			let i = 0;
@@ -48,7 +48,7 @@ let Utils = {
 			});
 		});
 	},
-	Clean: (message, Count) => {
+	Clean: (message, Count) => { // Cleaning messages
 		return new Promise((resolve, reject) => {
 			let i = 0;
 			message.channel.fetchMessages({limit: Count}).then((messages) => {

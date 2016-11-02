@@ -31,6 +31,10 @@ String.prototype.escapeRegExp = function(){
     return this.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
+String.prototype.actualLength = function(){
+	return this.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '_').length;
+}
+
 String.prototype.containsArray = function(array){
 	let x = false;
 	let valid = true;
@@ -193,7 +197,13 @@ Sledgehammer.on('messageUpdate', (oldMessage, newMessage) => {
 							);
 							if(q.test(newMessage.content)){
 								newMessage.delete();
-								s.sendModlog(`Removed link from ${newMessage.author.username} in ${newMessage.channel}`);
+								s.sendModlog(message, `Removed link from ${newMessage.author.username} in ${newMessage.channel}`);
+							}
+						}else if(filter.type === "invite" || filter.type === "invites"){
+							let q = new RegExp("(?:http\:\/\/)?(?:https\:\/\/)?discord.gg\/(?:[^\s]*)", "gi");
+							if(q.test(message.content)){
+								message.delete();
+								s.sendModlog(message, `Removed invite link from ${message.author.username} in ${message.channel}`);
 							}
 						}
 					}
@@ -223,109 +233,120 @@ Sledgehammer.on("message", (message) => {
 			s.create();
 		}
 
-		s.blacklist.then((list) => { // Get the list of blacklisted words
+		s.prefix.then((prefix) => {
 
-			if(list === null){
-				list = [];
-			}
+			s.blacklist.then((list) => { // Get the list of blacklisted words
 
-			if(message.content.replace(/\s\s+/g, " ").containsArray(list)){
-				if(Args[0].toLowerCase() === Config.prefix+"whitelist"){
-					if(!message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
+				if(list === null){
+					list = [];
+				}
+
+				if(message.content.replace(/\s\s+/g, " ").containsArray(list)){
+					if(Args[0].toLowerCase() === prefix+"whitelist"){
+						if(!message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
+							message.delete();
+							s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
+							return;
+						}
+					}else{
 						message.delete();
 						s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
 						return;
 					}
-				}else{
-					message.delete();
-					s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
-					return;
 				}
-			}
 
-			s.linkFilter(message.channel.id).then((filter) => {
-				if(filter !== null){
-					if(!message.channel.permissionsFor(message.author).hasPermission("EMBED_LINKS")){
-						if(filter.type === "all"){
-							let q = new RegExp(
-							"^" +
-							// protocol identifier
-							"(?:(?:https?|ftp)://)" +
-							// user:pass authentication
-							"(?:\\S+(?::\\S*)?@)?" +
-							"(?:" +
-							// IP address exclusion
-							// private & local networks
-							"(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
-							"(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
-							"(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
-							// IP address dotted notation octets
-							// excludes loopback network 0.0.0.0
-							// excludes reserved space >= 224.0.0.0
-							// excludes network & broacast addresses
-							// (first & last IP address of each class)
-							"(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
-							"(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
-							"(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
-							"|" +
-							// host name
-							"(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
-							// domain name
-							"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
-							// TLD identifier
-							"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
-							// TLD may end with dot
-							"\\.?" +
-							")" +
-							// port number
-							"(?::\\d{2,5})?" +
-							// resource path
-							"(?:[/?#]\\S*)?" +
-							"$", "i"
-							);
-							if(q.test(message.content)){
-								message.delete();
-								s.sendModlog(`Removed link from ${message.author.username} in ${message.channel}`);
+				s.linkFilter(message.channel.id).then((filter) => {
+					if(filter !== null){
+						if(!message.channel.permissionsFor(message.author).hasPermission("EMBED_LINKS")){
+							if(filter.type === "all"){
+								let q = new RegExp(
+								"^" +
+								// protocol identifier
+								"(?:(?:https?|ftp)://)" +
+								// user:pass authentication
+								"(?:\\S+(?::\\S*)?@)?" +
+								"(?:" +
+								// IP address exclusion
+								// private & local networks
+								"(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
+								"(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
+								"(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
+								// IP address dotted notation octets
+								// excludes loopback network 0.0.0.0
+								// excludes reserved space >= 224.0.0.0
+								// excludes network & broacast addresses
+								// (first & last IP address of each class)
+								"(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
+								"(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
+								"(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
+								"|" +
+								// host name
+								"(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
+								// domain name
+								"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
+								// TLD identifier
+								"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
+								// TLD may end with dot
+								"\\.?" +
+								")" +
+								// port number
+								"(?::\\d{2,5})?" +
+								// resource path
+								"(?:[/?#]\\S*)?" +
+								"$", "i"
+								);
+								if(q.test(message.content)){
+									message.delete();
+									s.sendModlog(message, `Removed link from ${message.author.username} in ${message.channel}`);
+								}
+							}else if(filter.type === "invite" || filter.type === "invites"){
+								let q = new RegExp("(?:http\:\/\/)?(?:https\:\/\/)?discord.gg\/(?:[^\s]*)", "gi");
+								if(q.test(message.content)){
+									message.delete();
+									s.sendModlog(message, `Removed invite link from ${message.author.username} in ${message.channel}`);
+								}
 							}
 						}
 					}
+				});
+
+				if(message.author.bot) return;
+
+				if(Args[0].startsWith(prefix)){
+					let Command = Args[0].replace(prefix, "").toLowerCase();
+
+					if(Command in Commands.list){
+						try{
+							let now = new Date().valueOf();
+							if(Cooldown.firstTime[Command] === undefined){
+								Cooldown.firstTime[Command] = {};
+							}
+							if(Cooldown.lastExecTime[Command] === undefined){
+								Cooldown.lastExecTime[Command] = {};
+							}
+
+							let FirstTime = Cooldown.firstTime[Command][message.author.id] || false;
+							let last = Cooldown.lastExecTime[Command][message.author.id] || 0;
+
+
+							if(now <= last+Utils.resolveCooldown(Command)*1000 && FirstTime){
+								// Cooldown
+								let time = Math.round(((last + Utils.resolveCooldown(Command) * 1000) - now) / 1000);
+								message.channel.sendMessage(`You need to calm down, ${message.author.username}. :hourglass: ${time} seconds`);
+							}else{
+								Args.shift();
+								Utils.resolveCommand(Command).Execute(Args, message);
+								Cooldown.firstTime[Command][message.author.id] = true;
+								Cooldown.lastExecTime[Command][message.author.id] = now;
+							}
+						}catch(e){
+							console.log(e);
+						};
+					}
 				}
+			}).catch((e) => {
+				console.dir(e);
 			});
-
-			if(message.author.bot) return;
-
-			if(Args[0].startsWith(Config.prefix)){
-				let Command = Args[0].replace(Config.prefix, "").toLowerCase();
-
-				if(Command in Commands.list){
-					try{
-						let now = new Date().valueOf();
-						if(Cooldown.firstTime[Command] === undefined){
-							Cooldown.firstTime[Command] = {};
-						}
-						if(Cooldown.lastExecTime[Command] === undefined){
-							Cooldown.lastExecTime[Command] = {};
-						}
-
-						let FirstTime = Cooldown.firstTime[Command][message.author.id] || false;
-						let last = Cooldown.lastExecTime[Command][message.author.id] || 0;
-
-
-						if(now <= last+Utils.resolveCooldown(Command)*1000 && FirstTime){
-							// Cooldown
-							let time = Math.round(((last + Utils.resolveCooldown(Command) * 1000) - now) / 1000);
-							message.channel.sendMessage(`You need to calm down, ${message.author.username}. :hourglass: ${time} seconds`);
-						}else{
-							Args.shift();
-							Utils.resolveCommand(Command).Execute(Args, message);
-							Cooldown.firstTime[Command][message.author.id] = true;
-							Cooldown.lastExecTime[Command][message.author.id] = now;
-						}
-					}catch(e){
-						console.log(e);
-					};
-				}
-			}
 		}).catch((e) => {
 			console.dir(e);
 		});

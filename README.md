@@ -20,7 +20,7 @@ ____
 
 - Auto Mod
 	- Filtering
-   		- Links 
+   		- Links ✔
    		- Words ✔
    		- Black/Whitelisting ✔
 	- Channel Filtering

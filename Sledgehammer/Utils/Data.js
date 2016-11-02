@@ -67,4 +67,12 @@ module.exports = class Server{
 		return Sledgehammer.rdb.r.table("Servers").get(this.id).default(null).run(Sledgehammer.rdb.conn);
 	}
 
+	get prefix(){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id)("prefix").default("=>").run(Sledgehammer.rdb.conn);
+	}
+
+	setPrefix(prefix){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({prefix: prefix}).run(Sledgehammer.rdb.conn);
+	}
+
 }
