@@ -52,18 +52,26 @@ let Utils = {
 		console.log(User);
 		return new Promise((resolve, reject) => {
 			let i = 0;
+			let toClean = 0;
 			message.channel.fetchMessages({limit: Count}).then((messages) => {
+				messages.map((a) => {
+					if(User !== ""){
+						if(a.author.id === User){
+							toClean++;
+						}
+					}		
+				});
 				messages.map((ms) => {
 					if(User !== ""){
 						if(ms.author.id === User){
 							ms.delete().then(() => {
 								i++;
-								if(i === Count || i === messages.size){
+								if(i === toClean || i === messages.size){
 									resolve(i);
 								}
 							}).catch((e) => {
 								i++;
-								if(i === Count || i === messages.size){
+								if(i === toClean || i === messages.size){
 									resolve(i);
 								}
 							});	
@@ -164,6 +172,7 @@ module.exports = {
 	ban: {
 		Execute: (Args, message) => {
 			let Member = message.guild.fetchMember(message.author);
+			let s = new Server(messages.guild.id);
 			if(Args.length >= 1){
 				let Mentions = message.mentions.users;
 				if(Mentions.size >= 1){
