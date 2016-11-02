@@ -5,7 +5,7 @@
 
 module.exports = {
 	Metadata: {
-		List: ['modlog', 'linkfilter', 'config', 'setprefix', 'edit'],
+		List: ['modlog', 'linkfilter', 'config', 'setprefix', 'edit', 'message'],
 		Name: "Configuration Commands",
 		Description: "Configurations"
 	},
@@ -129,7 +129,7 @@ module.exports = {
 							toSend += `\n**❯ Link filtering in <#${filter}>: ${server.linkFilter[filter].type} ❮**`;
 						}
 					}
-					if(server.prefix !== null){
+					if(server.prefix !== null && server.prefix !== undefined){
 						toSend += `\n**❯ Prefix: ${server.prefix} ❮**`;
 					}
 					message.channel.sendMessage(toSend);
@@ -205,15 +205,22 @@ module.exports = {
 								if(Args.length >= 2){
 									if(Args[1].toLowerCase() === "message"){
 										let channel = message.channel.id;
-										if(Channels.size >= 1){
-											channel = Channels.first().id;
-											Args.splice(Args.indexOf(`<#${channel}>`), 1);
-										}
-										Args.shift();
-										Args.shift();
-										let msg = Args.join(" ");
-										s.setJoinLog(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onJoin message \`${msg}\` set to send in <#${channel}>`);
+										s.modlog.then((ml) => {
+											if(ml !== null){
+												channel = ml;
+											}
+											if(Channels.size >= 1){
+												channel = Channels.first().id;
+												Args.splice(Args.indexOf(`<#${channel}>`), 1);
+											}
+											Args.shift();
+											Args.shift();
+											let msg = Args.join(" ");
+											s.setJoinLog(channel, msg).then(() => {
+												message.channel.sendMessage(`:white_check_mark: onJoin message \`${msg}\` set to send in <#${channel}>`);
+											}).catch((e) => {
+												message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											});
 										}).catch((e) => {
 											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
 										});
@@ -226,19 +233,82 @@ module.exports = {
 							break;
 
 							case "onleave":
-
+								if(Args.length >= 2){
+									if(Args[1].toLowerCase() === "message"){
+										let channel = message.channel.id;
+										s.modlog.then((ml) => {
+											if(ml !== null){
+												channel = ml;
+											}
+											if(Channels.size >= 1){
+												channel = Channels.first().id;
+												Args.splice(Args.indexOf(`<#${channel}>`), 1);
+											}
+											Args.shift();
+											Args.shift();
+											let msg = Args.join(" ");
+											s.setLeave(channel, msg).then(() => {
+												message.channel.sendMessage(`:white_check_mark: onLeave message \`${msg}\` set to send in <#${channel}>`);
+											}).catch((e) => {
+												message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											});
+										}).catch((e) => {
+											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										});
+									}else{
+										message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									}
+								}else{
+									message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								}
 							break;
 
-							case "onkick":
-
+							/*case "onkick":
+								if(Args.length >= 2){
+									if(Args[1].toLowerCase() === "message"){
+										let msg = Args.join(" ");
+										s.setKickMessage(msg).then(() => {
+											message.channel.sendMessage(`:white_check_mark: onKick message set to \`${msg}\`.`);
+										}).catch((e) => {
+											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										});
+									}else{
+										message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									}
+								}else{
+									message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								}
 							break;
 
 							case "onban":
 
-							break;
+							break;*/
 
 							case "onunban":
-
+								if(Args.length >= 2){
+									if(Args[1].toLowerCase() === "message"){
+										let channel = message.channel.id;
+										s.modlog.then((ml) => {
+											if(ml !== null){
+												channel = ml;
+											}
+											Args.shift();
+											Args.shift();
+											let msg = Args.join(" ");
+											s.setUnbanMessage(channel, msg).then(() => {
+												message.channel.sendMessage(`:white_check_mark: onUnban message set to \`${msg}\`.`);
+											}).catch((e) => {
+												message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											});
+										}).catch((e) => {
+											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										});
+									}else{
+										message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									}
+								}else{
+									message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								}
 							break;
 
 							case "onemojicreate":
@@ -300,6 +370,133 @@ module.exports = {
 			Events: ["`onJoin`", '`onLeave`', '`onKick`', '`onBan`', '`onUnban`', '`onEmojiCreate`', '`onEmojiDelete`', '`onEmojiUpdate`', '`onMemberUpdate`', '`onUserUpdate`', '`onServerUpdate`', '`onMessageDelete`', '`onMessageUpdate`', '`onRoleCreate`', '`onRoleDelete`', '`onRoleUpdate`'],
 			Response__types: ['`message`'],
 			Values: [`#channel`, `[message]`]
+		}
+	},
+
+	message: {
+		Execute: (Args, message) => {
+			let s = new Server(message.guild.id);
+			if(Args.length >= 2){
+				message.guild.fetchMember(message.author).then((user) => {
+					if(user.roles.exists("name", "Sledgehammer Configurator")){
+						switch(Args[0].toLowerCase()){
+							case "join":
+								if(Args[1].toLowerCase() === "true"){
+									s.setMessage("join", true).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will now be sent when a user joins.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else if(Args[1].toLowerCase() === "false"){
+									s.setMessage("join", false).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when a user joins.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else{
+									message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+								}
+							break;
+							case "leave":
+								if(Args[1].toLowerCase() === "true"){
+									s.setMessage("leave", true).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will now be sent when a user leaves.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else if(Args[1].toLowerCase() === "false"){
+									s.setMessage("leave", false).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when a user leaves.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else{
+									message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+								}
+							break;
+							case "ban":
+								if(Args[1].toLowerCase() === "true"){
+									s.setMessage("ban", true).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will now be sent when a user gets banned.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else if(Args[1].toLowerCase() === "false"){
+									s.setMessage("ban", false).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when a user gets banned.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else{
+									message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+								}
+							break;
+							case "unban":
+								if(Args[1].toLowerCase() === "true"){
+									s.setMessage("unban", true).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will now be sent when a user gets unbanned.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else if(Args[1].toLowerCase() === "false"){
+									s.setMessage("unban", false).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when a user gets unbanned.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else{
+									message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+								}
+							break;
+							case "linkdelete":
+								if(Args[1].toLowerCase() === "true"){
+									s.setMessage("linkdelete", true).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will now be sent when a link gets deleted.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else if(Args[1].toLowerCase() === "false"){
+									s.setMessage("linkdelete", false).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when a link gets deleted.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else{
+									message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+								}
+							break;
+							case "blacklistdelete":
+								if(Args[1].toLowerCase() === "true"){
+									s.setMessage("blacklistdelete", true).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will now be sent when a blacklisted word gets deleted.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else if(Args[1].toLowerCase() === "false"){
+									s.setMessage("blacklistdelete", false).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when a blacklisted word gets deleted.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else{
+									message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+								}
+							break;
+						}
+					}else{
+						message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You need a role called \`Sledgehammer Configurator\`.`);
+					}
+				});
+			}else{
+				message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+			}
+		},
+		Cooldown: 5,
+		Description: "Changes if messages should be sent",
+		Usage: "``Type``, ``value``",
+		Extra: {
+			Types: ['`join`', '`leave`', '`ban`', '`unban`', '`linkdelete`', '`blacklistdelete`'],
+			Values: ['`true`', '`false`']
 		}
 	}
 }

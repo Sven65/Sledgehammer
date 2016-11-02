@@ -89,7 +89,7 @@ module.exports = {
 							Utils.Kick(Mentions, message).then((Kicked) => {
 								let s = new Server(message.guild.id);
 								let and = "";
-								toSend = `:white_check_mark: Kicked ${Kicked.length>1?'users':'user'}`;
+								toSend = `:white_check_mark: ${message.author.username} Kicked ${Kicked.length>1?'users':'user'}`;
 								if(Kicked.length >= 2){
 									and = Kicked.pop();
 								}
@@ -128,7 +128,7 @@ module.exports = {
 							let toSend = "";
 							Utils.Ban(Mentions, message).then((Banned) => {
 								let and = "";
-								toSend = `:white_check_mark: Banned ${Banned.length>1?'users':'user'}`;
+								toSend = `:white_check_mark: ${message.author.username} Banned ${Banned.length>1?'users':'user'}`;
 								if(Banned.length >= 2){
 									and = Banned.pop();
 								}

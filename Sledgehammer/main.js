@@ -139,6 +139,37 @@ Sledgehammer.on("guildMemberAdd", (member) => {
 	});
 });
 
+Sledgehammer.on("guildMemberRemove", (member) => {
+	let s = new Server(member.guild.id);
+	s.leaveLog.then((log) => {
+		if(log !== null){
+			let time = new Date();
+			let message = DateFormat.formatDate(time, log.message.replace(/\${user}/gi, member.user.username));
+			member.guild.channels.find("id", log.id).sendMessage(message);
+		}
+	});
+});
+
+Sledgehammer.on("guildBanRemove", (guild, member) => {
+	let s = new Server(guild.id);
+	s.messages.then((messages) => {
+		if(messages !== null){
+			if(messages.unban){
+				s.modLog.then((ml) => {
+					s.unbanMessage.then((message) => {
+						let time = new Date();
+						if(message !== null){
+							message = DateFormat.formatDate(time, message.replace(/\${user}/gi, member.username));
+						}else{
+							message = `${time.toUTCString()} ${member.username} was unbanned.`;
+						}
+						guild.channels.find("id", ml).sendMessage(message);
+					});
+				});
+			}
+		}
+	});
+});
 
 Sledgehammer.on('messageUpdate', (oldMessage, newMessage) => {
 	if(newMessage.author === Sledgehammer.user) return;
@@ -159,119 +190,27 @@ Sledgehammer.on('messageUpdate', (oldMessage, newMessage) => {
 
 		s.blacklist.then((list) => { // Get the list of blacklisted words
 
-			if(list === null){
-				list = [];
-			}
+			s.messages.then((messages) => {
 
-			if(newMessage.content.replace(/\s\s+/g, " ").containsArray(list)){
-				newMessage.delete();
-				s.sendModlog(message, `[${Time}] Removed msessage from ${newMessage.author.username} (${newMessage.author.id})`)
-				return;
-			}
 
-			s.linkFilter(newMessage.channel.id).then((filter) => {
-				if(filter !== null){
-					if(!newMessage.channel.permissionsFor(newMessage.author).hasPermission("EMBED_LINKS")){
-						if(filter.type === "all"){
-							let q = new RegExp(
-							"^" +
-							// protocol identifier
-							"(?:(?:https?|ftp)://)" +
-							// user:pass authentication
-							"(?:\\S+(?::\\S*)?@)?" +
-							"(?:" +
-							// IP address exclusion
-							// private & local networks
-							"(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
-							"(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
-							"(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
-							// IP address dotted notation octets
-							// excludes loopback network 0.0.0.0
-							// excludes reserved space >= 224.0.0.0
-							// excludes network & broacast addresses
-							// (first & last IP address of each class)
-							"(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
-							"(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
-							"(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
-							"|" +
-							// host name
-							"(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
-							// domain name
-							"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
-							// TLD identifier
-							"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
-							// TLD may end with dot
-							"\\.?" +
-							")" +
-							// port number
-							"(?::\\d{2,5})?" +
-							// resource path
-							"(?:[/?#]\\S*)?" +
-							"$", "i"
-							);
-							if(q.test(newMessage.content)){
-								newMessage.delete();
-								s.sendModlog(message, `Removed link from ${newMessage.author.username} in ${newMessage.channel}`);
-							}
-						}else if(filter.type === "invite" || filter.type === "invites"){
-							let q = new RegExp("(?:http\:\/\/)?(?:https\:\/\/)?discord.gg\/(?:[^\s]*)", "gi");
-							if(q.test(message.content)){
-								message.delete();
-								s.sendModlog(message, `Removed invite link from ${message.author.username} in ${message.channel}`);
-							}
-						}
-					}
-				}
-			});
-		});
-	});
-});
-
-Sledgehammer.on("message", (message) => {
-
-	if(message.author === Sledgehammer.user) return;
-
-	if(message.channel.type !== "text"){
-		message.channel.sendMessage(`Sorry, I don't respond to private messages.`);
-		return;
-		message.guild = {id: "0"};
-	}
-	let s = new Server(message.guild.id); // Make a new 'Server' class mapped to the current server ID
-	
-	s.exists.then((ex) => {
-
-		let Args = message.content.replace(/\s\s+/g, " ").split(" ");
-		let Time = new Date().toUTCString();
-
-		if(!ex){
-			s.create();
-		}
-
-		s.prefix.then((prefix) => {
-
-			s.blacklist.then((list) => { // Get the list of blacklisted words
 
 				if(list === null){
 					list = [];
 				}
 
-				if(message.content.replace(/\s\s+/g, " ").containsArray(list)){
-					if(Args[0].toLowerCase() === prefix+"whitelist"){
-						if(!message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
-							message.delete();
-							s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
-							return;
+				if(newMessage.content.replace(/\s\s+/g, " ").containsArray(list)){
+					newMessage.delete();
+					if(messages !== null){
+						if(messages.blacklistdelete){
+							s.sendModlog(message, `[${Time}] Removed message from ${newMessage.author.username} (${newMessage.author.id})`)
 						}
-					}else{
-						message.delete();
-						s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
-						return;
 					}
+					return;
 				}
 
-				s.linkFilter(message.channel.id).then((filter) => {
+				s.linkFilter(newMessage.channel.id).then((filter) => {
 					if(filter !== null){
-						if(!message.channel.permissionsFor(message.author).hasPermission("EMBED_LINKS")){
+						if(!newMessage.channel.permissionsFor(newMessage.author).hasPermission("EMBED_LINKS")){
 							if(filter.type === "all"){
 								let q = new RegExp(
 								"^" +
@@ -309,55 +248,183 @@ Sledgehammer.on("message", (message) => {
 								"(?:[/?#]\\S*)?" +
 								"$", "i"
 								);
-								if(q.test(message.content)){
-									message.delete();
-									s.sendModlog(message, `Removed link from ${message.author.username} in ${message.channel}`);
+								if(q.test(newMessage.content)){
+									newMessage.delete();
+									if(messages !== null){
+										if(messages.linkdelete){
+											s.sendModlog(message, `Removed link from ${newMessage.author.username} in ${newMessage.channel}`);
+										}
+									}
 								}
 							}else if(filter.type === "invite" || filter.type === "invites"){
 								let q = new RegExp("(?:http\:\/\/)?(?:https\:\/\/)?discord.gg\/(?:[^\s]*)", "gi");
 								if(q.test(message.content)){
 									message.delete();
-									s.sendModlog(message, `Removed invite link from ${message.author.username} in ${message.channel}`);
+									if(messages !== null){
+										if(messages.linkdelete){
+											s.sendModlog(message, `Removed invite link from ${message.author.username} in ${message.channel}`);
+										}
+									}
 								}
 							}
 						}
 					}
 				});
+			});
+		});
+	});
+});
 
-				if(message.author.bot) return;
+Sledgehammer.on("message", (message) => {
 
-				if(Args[0].startsWith(prefix)){
-					let Command = Args[0].replace(prefix, "").toLowerCase();
+	if(message.author === Sledgehammer.user) return;
 
-					if(Command in Commands.list){
-						try{
-							let now = new Date().valueOf();
-							if(Cooldown.firstTime[Command] === undefined){
-								Cooldown.firstTime[Command] = {};
-							}
-							if(Cooldown.lastExecTime[Command] === undefined){
-								Cooldown.lastExecTime[Command] = {};
-							}
+	if(message.channel.type !== "text"){
+		message.channel.sendMessage(`Sorry, I don't respond to private messages.`);
+		return;
+		message.guild = {id: "0"};
+	}
+	let s = new Server(message.guild.id); // Make a new 'Server' class mapped to the current server ID
+	
+	s.exists.then((ex) => {
 
-							let FirstTime = Cooldown.firstTime[Command][message.author.id] || false;
-							let last = Cooldown.lastExecTime[Command][message.author.id] || 0;
+		let Args = message.content.replace(/\s\s+/g, " ").split(" ");
+		let Time = new Date().toUTCString();
 
+		if(!ex){
+			s.create();
+		}
 
-							if(now <= last+Utils.resolveCooldown(Command)*1000 && FirstTime){
-								// Cooldown
-								let time = Math.round(((last + Utils.resolveCooldown(Command) * 1000) - now) / 1000);
-								message.channel.sendMessage(`You need to calm down, ${message.author.username}. :hourglass: ${time} seconds`);
-							}else{
-								Args.shift();
-								Utils.resolveCommand(Command).Execute(Args, message);
-								Cooldown.firstTime[Command][message.author.id] = true;
-								Cooldown.lastExecTime[Command][message.author.id] = now;
-							}
-						}catch(e){
-							console.log(e);
-						};
+		s.prefix.then((prefix) => {
+
+			s.blacklist.then((list) => { // Get the list of blacklisted words
+
+				s.messages.then((messages) => {
+
+					if(list === null){
+						list = [];
 					}
-				}
+
+					if(message.content.replace(/\s\s+/g, " ").containsArray(list)){
+						if(Args[0].toLowerCase() === prefix+"whitelist"){
+							if(!message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
+								message.delete();
+								if(messages !== null){
+									if(messages.blacklistdelete){
+										s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
+									}
+								}
+								return;
+							}
+						}else{
+							message.delete();
+							if(messages !== null){
+								if(messages.blacklistdelete){
+									s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
+								}
+							}
+							return;
+						}
+					}
+
+					s.linkFilter(message.channel.id).then((filter) => {
+						if(filter !== null){
+							if(!message.channel.permissionsFor(message.author).hasPermission("EMBED_LINKS")){
+								if(filter.type === "all"){
+									let q = new RegExp(
+									"^" +
+									// protocol identifier
+									"(?:(?:https?|ftp)://)" +
+									// user:pass authentication
+									"(?:\\S+(?::\\S*)?@)?" +
+									"(?:" +
+									// IP address exclusion
+									// private & local networks
+									"(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
+									"(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
+									"(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
+									// IP address dotted notation octets
+									// excludes loopback network 0.0.0.0
+									// excludes reserved space >= 224.0.0.0
+									// excludes network & broacast addresses
+									// (first & last IP address of each class)
+									"(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
+									"(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
+									"(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
+									"|" +
+									// host name
+									"(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
+									// domain name
+									"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
+									// TLD identifier
+									"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
+									// TLD may end with dot
+									"\\.?" +
+									")" +
+									// port number
+									"(?::\\d{2,5})?" +
+									// resource path
+									"(?:[/?#]\\S*)?" +
+									"$", "i"
+									);
+									if(q.test(message.content)){
+										message.delete();
+										if(messages !== null){
+											if(messages.linkdelete){
+												s.sendModlog(message, `Removed link from ${message.author.username} in ${message.channel}`);
+											}
+										}
+									}
+								}else if(filter.type === "invite" || filter.type === "invites"){
+									let q = new RegExp("(?:http\:\/\/)?(?:https\:\/\/)?discord.gg\/(?:[^\s]*)", "gi");
+									if(q.test(message.content)){
+										message.delete();
+										if(messages !== null){
+											if(messages.linkdelete){
+												s.sendModlog(message, `Removed invite link from ${message.author.username} in ${message.channel}`);
+											}
+										}
+									}
+								}
+							}
+						}
+					});
+
+					if(message.author.bot) return;
+
+					if(Args[0].startsWith(prefix)){
+						let Command = Args[0].replace(prefix, "").toLowerCase();
+
+						if(Command in Commands.list){
+							try{
+								let now = new Date().valueOf();
+								if(Cooldown.firstTime[Command] === undefined){
+									Cooldown.firstTime[Command] = {};
+								}
+								if(Cooldown.lastExecTime[Command] === undefined){
+									Cooldown.lastExecTime[Command] = {};
+								}
+
+								let FirstTime = Cooldown.firstTime[Command][message.author.id] || false;
+								let last = Cooldown.lastExecTime[Command][message.author.id] || 0;
+
+
+								if(now <= last+Utils.resolveCooldown(Command)*1000 && FirstTime){
+									// Cooldown
+									let time = Math.round(((last + Utils.resolveCooldown(Command) * 1000) - now) / 1000);
+									message.channel.sendMessage(`You need to calm down, ${message.author.username}. :hourglass: ${time} seconds`);
+								}else{
+									Args.shift();
+									Utils.resolveCommand(Command).Execute(Args, message);
+									Cooldown.firstTime[Command][message.author.id] = true;
+									Cooldown.lastExecTime[Command][message.author.id] = now;
+								}
+							}catch(e){
+								console.log(e);
+							};
+						}
+					}
+				});
 			}).catch((e) => {
 				console.dir(e);
 			});
