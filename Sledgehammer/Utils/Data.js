@@ -75,4 +75,12 @@ module.exports = class Server{
 		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({prefix: prefix}).run(Sledgehammer.rdb.conn);
 	}
 
+	setJoinLog(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({joinLog: {id: channel, message: message}}).run(Sledgehammer.rdb.conn);
+	}
+
+	get joinLog(){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id)("joinLog").default(null).run(Sledgehammer.rdb.conn);
+	}
+
 }

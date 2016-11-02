@@ -35,6 +35,16 @@ module.exports = {
 
 					helpMsg += `**Usage: **\`${prefix}${Command.capFirst()}\` ${Commands.all[Commands.list[Command]][Command].Usage}\n\n`;
 					helpMsg += `**Cooldown: ** ${Commands.all[Commands.list[Command]][Command].Cooldown.formatNumber()} seconds.`;
+					if(Commands.all[Commands.list[Command]][Command].hasOwnProperty("Extra")){
+						for(let Extra in Commands.all[Commands.list[Command]][Command].Extra){
+							helpMsg += "\n";
+							helpMsg += `**${Extra.replace("__", " ")}: `;
+							if(Array.isArray(Commands.all[Commands.list[Command]][Command].Extra[Extra])){
+								helpMsg += `${Commands.all[Commands.list[Command]][Command].Extra[Extra].join(', ')}`;
+								helpMsg += "**";
+							}
+						}
+					}
 
 					message.channel.sendMessage(helpMsg);
 				}

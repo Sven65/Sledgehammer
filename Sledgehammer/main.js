@@ -4,6 +4,7 @@ const fs = require("fs");
 const rethink = require('rethinkdb');
 
 global.Server = require("./Utils/Data.js");
+global.DateFormat = require("./Utils/DateFormat.js");
 
 let Commands = {
 	all: [],
@@ -125,6 +126,18 @@ rethink.connect({host: 'localhost', port: 28015, user: Config.database.user, pas
 Sledgehammer.on("ready", () => {
 	console.log("Sledgehammer ready to hammer.");
 });
+
+Sledgehammer.on("guildMemberAdd", (member) => {
+	let s = new Server(member.guild.id);
+	s.joinLog.then((log) => {
+		if(log !== null){
+			let time = new Date();
+			let message = DateFormat.formatDate(time, log.message.replace(/\${user}/gi, member.user.username));
+			member.guild.channels.find("id", log.id).sendMessage(message);
+		}
+	});
+});
+
 
 Sledgehammer.on('messageUpdate', (oldMessage, newMessage) => {
 	if(newMessage.author === Sledgehammer.user) return;
