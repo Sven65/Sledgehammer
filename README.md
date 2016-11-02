@@ -66,6 +66,19 @@ ____
     	- Member Timer w/ Role
     	- Spam Prevention Settings
 
+- Configurations
+  - Kicks ✔
+    - Message ✔
+    - Channel ✔
+  - Bans ✔
+    - Message ✔
+    - Channel ✔
+  - Joins ✔
+    - Message ✔
+    - Channel ✔
+  - Leaves ✔
+    - Message ✔
+    - Channel ✔
 
 - Miscellaneous
 	- Prefix?
