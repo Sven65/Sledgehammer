@@ -48,22 +48,39 @@ let Utils = {
 			});
 		});
 	},
-	Clean: (message, Count) => { // Cleaning messages
+	Clean: (message, Count, User) => { // Cleaning messages
+		console.log(User);
 		return new Promise((resolve, reject) => {
 			let i = 0;
 			message.channel.fetchMessages({limit: Count}).then((messages) => {
 				messages.map((ms) => {
-					ms.delete().then(() => {
-						i++;
-						if(i === Count || i === messages.size){
-							resolve(i);
+					if(User !== ""){
+						if(ms.author.id === User){
+							ms.delete().then(() => {
+								i++;
+								if(i === Count || i === messages.size){
+									resolve(i);
+								}
+							}).catch((e) => {
+								i++;
+								if(i === Count || i === messages.size){
+									resolve(i);
+								}
+							});	
 						}
-					}).catch((e) => {
-						i++;
-						if(i === Count || i === messages.size){
-							resolve(i);
-						}
-					});	
+					}else{
+						ms.delete().then(() => {
+							i++;
+							if(i === Count || i === messages.size){
+								resolve(i);
+							}
+						}).catch((e) => {
+							i++;
+							if(i === Count || i === messages.size){
+								resolve(i);
+							}
+						});	
+					}
 				});
 			});
 		});
@@ -89,16 +106,43 @@ module.exports = {
 							Utils.Kick(Mentions, message).then((Kicked) => {
 								let s = new Server(message.guild.id);
 								let and = "";
+								let kicker = message.author.username;
+								let kicks = `${Kicked.length>1?'users':'user'}`;
 								toSend = `:white_check_mark: ${message.author.username} Kicked ${Kicked.length>1?'users':'user'}`;
 								if(Kicked.length >= 2){
 									and = Kicked.pop();
 								}
+								kicks += ` ${Kicked.join(',')} ${and.length>0?'and':''} ${and.length>0?and:''}`;
 								toSend += ` ${Kicked.join(',')} ${and.length>0?'and':''} ${and.length>0?and:''}`;
 								s.modlog.then((ml) => {
 									if(ml === null){
 										ml = message.channel.id;
 									}
-									message.guild.channels.find("id", ml).sendMessage(toSend);
+									s.channels.then((channels) => {
+										if(channels !== null){
+											if(channels.kickLog !== null && channels.kickLog !== undefined){
+												let time = new Date();
+												let ms = channels.kickLog.message.replace(/\${kicker}/gi, kicker).replace(/\${kickCount}/gi, Kicked.length).replace(/\${kicks}/gi, kicks);
+												toSend = DateFormat.formatDate(time, ms);
+												ml = channels.kickLog.id;
+											}
+										}
+
+										s.messages.then((messages) => {
+											if(messages !== null){
+												if(messages.kick !== null){
+													if(messages.kick){
+														message.guild.channels.find("id", ml).sendMessage(toSend);
+													}
+												}else{
+													message.guild.channels.find("id", ml).sendMessage(toSend);
+												}
+											}else{
+												message.guild.channels.find("id", ml).sendMessage(toSend);
+											}
+										});
+
+									});
 								});
 							});
 						}else{
@@ -126,18 +170,45 @@ module.exports = {
 					if(message.channel.permissionsFor(message.author).hasPermission("BAN_MEMBERS")){
 						if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("BAN_MEMBERS")){
 							let toSend = "";
+							let banner = message.author.username;
 							Utils.Ban(Mentions, message).then((Banned) => {
 								let and = "";
+								let bans = `${Banned.length>1?'users':'user'}`;
 								toSend = `:white_check_mark: ${message.author.username} Banned ${Banned.length>1?'users':'user'}`;
 								if(Banned.length >= 2){
 									and = Banned.pop();
 								}
+								bans += ` ${Banned.join(',')} ${and.length>0?'and':''} ${and.length>0?and:''}`;
 								toSend += ` ${Banned.join(',')} ${and.length>0?'and':''} ${and.length>0?and:''}`;
 								s.modlog.then((ml) => {
 									if(ml === null){
 										ml = message.channel.id;
 									}
-									message.guild.channels.find("id", ml).sendMessage(toSend);
+									s.channels.then((channels) => {
+										if(channels !== null){
+											if(channels.banLog !== null && channels.banLog !== undefined){
+												let time = new Date();
+												let ms = channels.banLog.message.replace(/\${banner}/gi, banner).replace(/\${banCount}/gi, Banned.length).replace(/\${bans}/gi, bans);
+												toSend = DateFormat.formatDate(time, ms);
+												ml = channels.banLog.id;
+											}
+										}
+
+										s.messages.then((messages) => {
+											if(messages !== null){
+												if(messages.ban !== null){
+													if(messages.ban){
+														message.guild.channels.find("id", ml).sendMessage(toSend);
+													}
+												}else{
+													message.guild.channels.find("id", ml).sendMessage(toSend);
+												}
+											}else{
+												message.guild.channels.find("id", ml).sendMessage(toSend);
+											}
+										});
+
+									});
 								});
 							});
 						}else{
@@ -165,8 +236,12 @@ module.exports = {
 			}
 			if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
 				if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("MANAGE_MESSAGES")){
+					let user = "";
+					if(message.mentions.users.size >= 1){
+						user = message.mentions.users.first().id;
+					}
 					let toSend = "";
-					Utils.Clean(message, purgeCount).then((Purged) => {
+					Utils.Clean(message, purgeCount, user).then((Purged) => {
 						toSend = `Purged ${Purged.formatNumber()} messages in ${message.channel}.`;
 						message.channel.sendMessage(toSend);
 					});
@@ -179,7 +254,7 @@ module.exports = {
 		},
 		Cooldown: 5,
 		Description: "Purges messages",
-		Usage: "`[amount]`"
+		Usage: "`[amount]`, `[@user]`"
 	},
 
 	blacklist: {

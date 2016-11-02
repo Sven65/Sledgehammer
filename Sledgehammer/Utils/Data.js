@@ -8,17 +8,6 @@ module.exports = class Server{
 		return Sledgehammer.rdb.r.table("Servers").insert(data).run(Sledgehammer.rdb.conn);
 	}
 
-	get exists(){
-		let id = this.id;
-		return Sledgehammer.rdb.r.table("Servers").filter(function(server){
-			return server("id").eq(id)
-		}).isEmpty().not().run(Sledgehammer.rdb.conn);
-	}
-
-	get blacklist(){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id)("Blacklist").default(null).run(Sledgehammer.rdb.conn)
-	}
-
 	blacklistAdd(word){
 		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
 			Blacklist: Sledgehammer.rdb.r.row("Blacklist").append(word)
@@ -33,10 +22,6 @@ module.exports = class Server{
 
 	setModlog(channel){
 		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({modlog: channel}).run(Sledgehammer.rdb.conn);
-	}
-
-	get modlog(){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id)("modlog").default(null).run(Sledgehammer.rdb.conn)
 	}
 
 	sendModlog(message, text){
@@ -63,6 +48,86 @@ module.exports = class Server{
 		return Sledgehammer.rdb.r.table("Servers").get(this.id)("linkFilter")(channel).default(null).run(Sledgehammer.rdb.conn);
 	}
 
+	setPrefix(prefix){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({prefix: prefix}).run(Sledgehammer.rdb.conn);
+	}
+
+	setJoin(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				joinLog: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
+	setKick(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				kickLog: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
+	setUnban(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				unbanLog: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
+	setBan(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				banLog: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
+	setMessage(type, value){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({messages: {type: value}}).run(Sledgehammer.rdb.conn);
+	}
+
+	setLeave(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				leaveLog: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
+	// Getters
+
+	get exists(){
+		let id = this.id;
+		return Sledgehammer.rdb.r.table("Servers").filter(function(server){
+			return server("id").eq(id)
+		}).isEmpty().not().run(Sledgehammer.rdb.conn);
+	}
+
+	get blacklist(){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id)("Blacklist").default(null).run(Sledgehammer.rdb.conn)
+	}
+
+	get modlog(){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id)("modlog").default(null).run(Sledgehammer.rdb.conn)
+	}
+
 	get all(){
 		return Sledgehammer.rdb.r.table("Servers").get(this.id).default(null).run(Sledgehammer.rdb.conn);
 	}
@@ -71,32 +136,12 @@ module.exports = class Server{
 		return Sledgehammer.rdb.r.table("Servers").get(this.id)("prefix").default("=>").run(Sledgehammer.rdb.conn);
 	}
 
-	setPrefix(prefix){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({prefix: prefix}).run(Sledgehammer.rdb.conn);
-	}
-
-	setJoinLog(channel, message){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({joinLog: {id: channel, message: message}}).run(Sledgehammer.rdb.conn);
-	}
-
 	get joinLog(){
 		return Sledgehammer.rdb.r.table("Servers").get(this.id)("joinLog").default(null).run(Sledgehammer.rdb.conn);
 	}
 
-	setLeaveLog(channel, message){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({leaveLog: {id: channel, message: message}}).run(Sledgehammer.rdb.conn);
-	}
-
 	get leaveLog(){
 		return Sledgehammer.rdb.r.table("Servers").get(this.id)("leaveLog").default(null).run(Sledgehammer.rdb.conn);
-	}
-
-	setKickMessage(message){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({modMessages: {kick: message}}).run(Sledgehammer.rdb.conn);
-	}
-
-	get kickMessage(){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id)("modMessages")("kick").default(null).run(Sledgehammer.rdb.conn);
 	}
 
 	get messages(){
@@ -107,12 +152,7 @@ module.exports = class Server{
 		return Sledgehammer.rdb.r.table("Servers").get(this.id)("modMessages")("unban").default(null).run(Sledgehammer.rdb.conn);
 	}
 
-	setUnbanMessage(message){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({modMessages: {unban: message}}).run(Sledgehammer.rdb.conn);
+	get channels(){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id)("channels").default(null).run(Sledgehammer.rdb.conn);
 	}
-
-	setMessage(type, value){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({messages: {type: value}}).run(Sledgehammer.rdb.conn);
-	}
-
 }
