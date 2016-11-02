@@ -146,13 +146,19 @@ Sledgehammer.on("guildMemberAdd", (member) => {
 				if(messages !== null){
 					if(messages.join !== null){
 						if(messages.join){
-							message.guild.channels.find("id", ml).sendMessage(toSend);
+							if(ml !== null){
+								member.guild.channels.find("id", ml).sendMessage(toSend);
+							}
 						}
 					}else{
-						message.guild.channels.find("id", ml).sendMessage(toSend);
+						if(ml !== null){
+							member.guild.channels.find("id", ml).sendMessage(toSend);
+						}
 					}
 				}else{
-					message.guild.channels.find("id", ml).sendMessage(toSend);
+					if(ml !== null){
+						member.guild.channels.find("id", ml).sendMessage(toSend);
+					}
 				}
 			});
 		});
@@ -177,13 +183,19 @@ Sledgehammer.on("guildMemberRemove", (member) => {
 				if(messages !== null){
 					if(messages.leave !== null){
 						if(messages.leave){
-							message.guild.channels.find("id", ml).sendMessage(toSend);
+							if(ml !== null){
+								member.guild.channels.find("id", ml).sendMessage(toSend);
+							}
 						}
 					}else{
-						message.guild.channels.find("id", ml).sendMessage(toSend);
+						if(ml !== null){
+							member.guild.channels.find("id", ml).sendMessage(toSend);
+						}
 					}
 				}else{
-					message.guild.channels.find("id", ml).sendMessage(toSend);
+					if(ml !== null){
+						member.guild.channels.find("id", ml).sendMessage(toSend);
+					}
 				}
 			});
 		});

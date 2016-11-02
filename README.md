@@ -79,6 +79,9 @@ ____
   - Leaves ✔
     - Message ✔
     - Channel ✔
+  - Unbans
+    - Message
+    - Channel
 
 - Miscellaneous
 	- Prefix?
