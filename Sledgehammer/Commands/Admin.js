@@ -172,7 +172,7 @@ module.exports = {
 	ban: {
 		Execute: (Args, message) => {
 			let Member = message.guild.fetchMember(message.author);
-			let s = new Server(messages.guild.id);
+			let s = new Server(message.guild.id);
 			if(Args.length >= 1){
 				let Mentions = message.mentions.users;
 				if(Mentions.size >= 1){

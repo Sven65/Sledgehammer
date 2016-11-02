@@ -130,23 +130,63 @@ Sledgehammer.on("ready", () => {
 
 Sledgehammer.on("guildMemberAdd", (member) => {
 	let s = new Server(member.guild.id);
-	s.joinLog.then((log) => {
-		if(log !== null){
-			let time = new Date();
-			let message = DateFormat.formatDate(time, log.message.replace(/\${user}/gi, member.user.username));
-			member.guild.channels.find("id", log.id).sendMessage(message);
-		}
+	s.modlog.then((ml) => {
+		s.channels.then((channels) => {
+			let toSend = `${member.user.username} Joined the server.`;
+			if(channels !== null){
+				if(channels.joinLog !== null && channels.joinLog !== undefined){
+					let time = new Date();
+					let ms = channels.joinLog.message.replace(/\${user}/gi, member.user.username);
+					toSend = DateFormat.formatDate(time, ms);
+					ml = channels.joinLog.id;
+				}
+			}
+
+			s.messages.then((messages) => {
+				if(messages !== null){
+					if(messages.join !== null){
+						if(messages.join){
+							message.guild.channels.find("id", ml).sendMessage(toSend);
+						}
+					}else{
+						message.guild.channels.find("id", ml).sendMessage(toSend);
+					}
+				}else{
+					message.guild.channels.find("id", ml).sendMessage(toSend);
+				}
+			});
+		});
 	});
 });
 
 Sledgehammer.on("guildMemberRemove", (member) => {
 	let s = new Server(member.guild.id);
-	s.leaveLog.then((log) => {
-		if(log !== null){
-			let time = new Date();
-			let message = DateFormat.formatDate(time, log.message.replace(/\${user}/gi, member.user.username));
-			member.guild.channels.find("id", log.id).sendMessage(message);
-		}
+	s.modlog.then((ml) => {
+		s.channels.then((channels) => {
+			let toSend = `${member.user.username} Left the server.`;
+			if(channels !== null){
+				if(channels.leaveLog !== null && channels.leaveLog !== undefined){
+					let time = new Date();
+					let ms = channels.leaveLog.message.replace(/\${user}/gi, member.user.username);
+					toSend = DateFormat.formatDate(time, ms);
+					ml = channels.leaveLog.id;
+				}
+			}
+
+			s.messages.then((messages) => {
+				if(messages !== null){
+					if(messages.leave !== null){
+						if(messages.leave){
+							message.guild.channels.find("id", ml).sendMessage(toSend);
+						}
+					}else{
+						message.guild.channels.find("id", ml).sendMessage(toSend);
+					}
+				}else{
+					message.guild.channels.find("id", ml).sendMessage(toSend);
+				}
+			});
+		});
 	});
 });
 
