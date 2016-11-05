@@ -587,8 +587,12 @@ module.exports = {
 								message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
 							break;
 						}
+					}else{
+						message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You need a role called \`Sledgehammer Configurator\`.`);
 					}
 				});
+			}else{
+				message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
 			}
 		},
 		Cooldown: 5,

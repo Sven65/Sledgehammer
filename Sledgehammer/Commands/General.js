@@ -14,13 +14,13 @@ module.exports = {
 		Execute: (Args, message) => {
 			let n = Date.now();
 			let id = message.author.id;
-			message.reply(`:hourglass:`).then(m => {
-				let time = (m.createdAt-n)/1000;
+			message.reply(`:hourglass:`).then((m) => {
+				let time = (n-m.createdAt)/1000;
 				m.edit(`<@${message.author.id}> :hourglass: ${time} seconds.`);
 			});
 		},
 		Description: "Sends you information about the response time.",
-		Cooldown: 10,
+		Cooldown: 5,
 		Usage: ""
 	},
 
