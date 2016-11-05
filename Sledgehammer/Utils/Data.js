@@ -111,6 +111,14 @@ module.exports = class Server{
 		}).run(Sledgehammer.rdb.conn);
 	}
 
+	setRole(role, id){
+		let data = {
+			roles: {}
+		};
+		data.roles[role] = id;
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update(data).run(Sledgehammer.rdb.conn);
+	}
+
 	// Getters
 
 	get exists(){
@@ -154,5 +162,9 @@ module.exports = class Server{
 
 	get channels(){
 		return Sledgehammer.rdb.r.table("Servers").get(this.id)("channels").default(null).run(Sledgehammer.rdb.conn);
+	}
+
+	get muteRole(){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id)("roles")("mute").default(null).run(Sledgehammer.rdb.conn);
 	}
 }

@@ -5,7 +5,7 @@
 
 module.exports = {
 	Metadata: {
-		List: ['modlog', 'linkfilter', 'config', 'setprefix', 'edit', 'message'],
+		List: ['modlog', 'linkfilter', 'config', 'setprefix', 'edit', 'message', 'role'],
 		Name: "Configuration Commands",
 		Description: "Configurations"
 	},
@@ -523,6 +523,23 @@ module.exports = {
 									message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
 								}
 							break;
+							case "mute":
+								if(Args[1].toLowerCase() === "true"){
+									s.setMessage("mute", true).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will now be sent when a user gets muted.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else if(Args[1].toLowerCase() === "false"){
+									s.setMessage("mute", false).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when a user gets muted.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else{
+									message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+								}
+							break;
 						}
 					}else{
 						message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You need a role called \`Sledgehammer Configurator\`.`);
@@ -536,8 +553,49 @@ module.exports = {
 		Description: "Changes if messages should be sent",
 		Usage: "``Type``, ``value``",
 		Extra: {
-			Types: ['`join`', '`leave`', '`ban`', '`unban`', '`linkdelete`', '`blacklistdelete`'],
+			Types: ['`join`', '`leave`', '`ban`', '`unban`', '`linkdelete`', '`blacklistdelete`', '`mute`'],
 			Values: ['`true`', '`false`']
+		}
+	},
+	role: {
+		Execute: (Args, message) => {
+			let s = new Server(message.guild.id);
+			if(Args.length >= 2){
+				message.guild.fetchMember(message.author).then((user) => {
+					if(user.roles.exists("name", "Sledgehammer Configurator")){
+						switch(Args[0].toLowerCase()){
+							case "mute":
+							case "muted":
+								let roleID = "";
+								if(message.mentions.roles.size >= 1){
+									roleID = message.mentions.roles.first().id;
+								}else{
+									Args.shift();
+									message.guild.roles.map((a) => {
+										if(a.name.toLowerCase() === Args.join(" ").toLowerCase()){
+											roleID = a.id;
+										}
+									});
+								}
+								s.setRole("mute", roleID).then(() => {
+									message.channel.sendMessage(`:white_check_mark: Mute role set to ${message.guild.roles.find("id", roleID).name}`);
+								}).catch((e) => {
+									message.channel.sendMessage(`:x: Something wen't wrong ${message.author.username}.`);
+								})
+							break;
+							default:
+								message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+							break;
+						}
+					}
+				});
+			}
+		},
+		Cooldown: 5,
+		Description: "Sets a role to use for functions",
+		Usage: "``RoleType``, ``@Role/Role Name``",
+		Extra: {
+			Role__Types: ['`muted`']
 		}
 	}
 }
