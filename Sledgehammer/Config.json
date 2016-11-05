@@ -2,7 +2,7 @@
 	"token": "",
 	"prefix": "=>",
 	"database": {
-		"username": "",
+		"user": "",
 		"password": ""
 	}
 }
