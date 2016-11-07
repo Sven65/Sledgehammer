@@ -352,6 +352,33 @@ module.exports = {
 								}
 							break;
 
+							case "onmute":
+								if(Args.length >= 2){
+									if(Args[1].toLowerCase() === "message"){
+										let channel = message.channel.id;
+										s.modlog.then((ml) => {
+											if(ml !== null){
+												channel = ml;
+											}
+											Args.shift();
+											Args.shift();
+											let msg = Args.join(" ");
+											s.setMute(channel, msg).then(() => {
+												message.channel.sendMessage(`:white_check_mark: onMute message set to \`${msg}\`.`);
+											}).catch((e) => {
+												message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											});
+										}).catch((e) => {
+											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										});
+									}else{
+										message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									}
+								}else{
+									message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								}
+							break;
+
 							case "onemojicreate":
 
 							break;

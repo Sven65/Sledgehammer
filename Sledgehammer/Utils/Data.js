@@ -96,6 +96,28 @@ module.exports = class Server{
 		}).run(Sledgehammer.rdb.conn);
 	}
 
+	setMute(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				muteLog: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
+	setUnMute(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				unmuteLog: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
 	setMessage(type, value){
 		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({messages: {type: value}}).run(Sledgehammer.rdb.conn);
 	}
