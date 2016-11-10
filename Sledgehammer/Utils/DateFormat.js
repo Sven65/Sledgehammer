@@ -6,7 +6,7 @@ module.exports = {
 			"%A": ["Sunday", "Monday", "Tuesday", "Wednesday", "Friday", "Saturday"][date.getDay()],
 			"%b": ["Jan", "Feb", "March", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()],
 			"%B": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][date.getMonth()],
-			"%d": date.getDay(),
+			"%d": date.getDate(),
 			"%D": date.getMonth()+1+"/"+date.getDate()+"/"+date.getFullYear().toString().substring(2, 4),
 			"%H": date.getHours(),
 			"%m": date.getMonth()+1,

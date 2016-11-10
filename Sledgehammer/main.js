@@ -309,7 +309,7 @@ Sledgehammer.on('messageUpdate', (oldMessage, newMessage) => {
 									}
 								}
 							}else if(filter.type === "invite" || filter.type === "invites"){
-								let q = new RegExp("(?:http\:\/\/)?(?:https\:\/\/)?discord.gg\/(?:[^\s]*)", "gi");
+								let q = new RegExp("(?:discord(?:\.gg|app\.com\/invite)\/(?<id>([\w]{16}|(?:[\w]+-?){3})))", "gi");
 								if(q.test(message.content)){
 									message.delete();
 									if(messages !== null){
