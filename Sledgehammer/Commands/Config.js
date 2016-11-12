@@ -360,11 +360,50 @@ module.exports = {
 											if(ml !== null){
 												channel = ml;
 											}
+
+											if(Channels.size >= 1){
+												channel = Channels.first().id;
+												Args.splice(Args.indexOf(`<#${channel}>`), 1);
+											}
+
 											Args.shift();
 											Args.shift();
 											let msg = Args.join(" ");
 											s.setMute(channel, msg).then(() => {
 												message.channel.sendMessage(`:white_check_mark: onMute message set to \`${msg}\`.`);
+											}).catch((e) => {
+												message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											});
+										}).catch((e) => {
+											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										});
+									}else{
+										message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									}
+								}else{
+									message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								}
+							break;
+
+							case "onunmute":
+								if(Args.length >= 2){
+									if(Args[1].toLowerCase() === "message"){
+										let channel = message.channel.id;
+										s.modlog.then((ml) => {
+											if(ml !== null){
+												channel = ml;
+											}
+
+											if(Channels.size >= 1){
+												channel = Channels.first().id;
+												Args.splice(Args.indexOf(`<#${channel}>`), 1);
+											}
+
+											Args.shift();
+											Args.shift();
+											let msg = Args.join(" ");
+											s.setUnMute(channel, msg).then(() => {
+												message.channel.sendMessage(`:white_check_mark: onUnMute message set to \`${msg}\`.`);
 											}).catch((e) => {
 												message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
 											});
@@ -560,6 +599,23 @@ module.exports = {
 								}else if(Args[1].toLowerCase() === "false"){
 									s.setMessage("mute", false).then(() => {
 										message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when a user gets muted.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else{
+									message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+								}
+							break;
+							case "unmute":
+								if(Args[1].toLowerCase() === "true"){
+									s.setMessage("unmute", true).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will now be sent when a user gets unmuted.`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else if(Args[1].toLowerCase() === "false"){
+									s.setMessage("unmute", false).then(() => {
+										message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when a user gets unmuted.`);
 									}).catch((e) => {
 										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
 									});
