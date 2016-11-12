@@ -79,15 +79,15 @@ ____
   - Leaves ✔
     - Message ✔
     - Channel ✔
-  - Unbans
-    - Message
-    - Channel
-  - Mutes
-    - Messages
-    - Channel
-  - Unmutes
-    - Messages
-    - Channel
+  - Unbans 
+    - Message 
+    - Channel 
+  - Mutes ✔
+    - Messages ✔
+    - Channel ✔
+  - Unmutes ✔
+    - Messages ✔
+    - Channel ✔
 
 - Miscellaneous
   - Prefix?

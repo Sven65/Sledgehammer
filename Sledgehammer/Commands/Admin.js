@@ -477,7 +477,7 @@ module.exports = {
 													if(channels !== null){
 														if(channels.unmuteLog !== null && channels.unmuteLog !== undefined){
 															let time = new Date();
-															let ms = channels.unMuteLog.message.replace(/\${muter}/gi, muter).replace(/\${muteCount}/gi, Unmuted.length).replace(/\${unmutes}/gi, mutes);
+															let ms = channels.unmuteLog.message.replace(/\${muter}/gi, muter).replace(/\${muteCount}/gi, Unmuted.length).replace(/\${unmutes}/gi, mutes);
 															toSend = DateFormat.formatDate(time, ms);
 															ml = channels.muteLog.id;
 														}

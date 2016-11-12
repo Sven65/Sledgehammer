@@ -418,6 +418,39 @@ module.exports = {
 								}
 							break;
 
+							case "onlinkremove":
+								if(Args.length >= 2){
+									if(Args[1].toLowerCase() === "message"){
+										let channel = message.channel.id;
+										s.modlog.then((ml) => {
+											if(ml !== null){
+												channel = ml;
+											}
+
+											if(Channels.size >= 1){
+												channel = Channels.first().id;
+												Args.splice(Args.indexOf(`<#${channel}>`), 1);
+											}
+
+											Args.shift();
+											Args.shift();
+											let msg = Args.join(" ");
+											s.setLinkRemove(channel, msg).then(() => {
+												message.channel.sendMessage(`:white_check_mark: onLinkRemove message set to \`${msg}\`.`);
+											}).catch((e) => {
+												message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											});
+										}).catch((e) => {
+											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										});
+									}else{
+										message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									}
+								}else{
+									message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								}
+							break;
+
 							case "onemojicreate":
 
 							break;
@@ -474,7 +507,7 @@ module.exports = {
 		Description: "Edits responses for events",
 		Usage: "``event``, ``responseType``, ``value``",
 		Extra: {
-			Events: ["`onJoin`", '`onLeave`', '`onKick`', '`onBan`', '`onUnban`', '`onEmojiCreate`', '`onEmojiDelete`', '`onEmojiUpdate`', '`onMemberUpdate`', '`onUserUpdate`', '`onServerUpdate`', '`onMessageDelete`', '`onMessageUpdate`', '`onRoleCreate`', '`onRoleDelete`', '`onRoleUpdate`'],
+			Events: ["`onJoin`", '`onLeave`', '`onKick`', '`onBan`', '`onUnban`', '`onEmojiCreate`', '`onEmojiDelete`', '`onEmojiUpdate`', '`onMemberUpdate`', '`onUserUpdate`', '`onServerUpdate`', '`onMessageDelete`', '`onMessageUpdate`', '`onRoleCreate`', '`onRoleDelete`', '`onRoleUpdate`', '`onLinkRemove`'],
 			Response__types: ['`message`'],
 			Values: [`#channel`, `[message]`]
 		}

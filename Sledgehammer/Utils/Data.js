@@ -141,6 +141,17 @@ module.exports = class Server{
 		return Sledgehammer.rdb.r.table("Servers").get(this.id).update(data).run(Sledgehammer.rdb.conn);
 	}
 
+	setLinkRemove(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				linkLog: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
 	// Getters
 
 	get exists(){
