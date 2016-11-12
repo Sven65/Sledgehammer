@@ -5,7 +5,7 @@
 
 module.exports = {
 	Metadata: {
-		List: ['modlog', 'linkfilter', 'config', 'setprefix', 'edit', 'message', 'role'],
+		List: ['modlog', 'linkfilter', 'config', 'setprefix', 'edit', 'message', 'role', 'acl'],
 		Name: "Configuration Commands",
 		Description: "Configurations"
 	},
@@ -716,6 +716,42 @@ module.exports = {
 		Usage: "``RoleType``, ``@Role/Role Name``",
 		Extra: {
 			Role__Types: ['`muted`']
+		}
+	},
+
+	acl: {
+		Execute: (Args, message) => {
+			let s = new Server(message.guild.id);
+			if(Args.length >= 1){
+				if(message.author.id === message.guild.ownerId){
+					let option = Args[0].toLowerCase();
+					if(option === "on"){
+						s.setACL(true).then(() => {
+							message.channel.sendMessage(`:white_check_mark: ACL Turned on, ${message.author.username}.`);
+						}).catch((e) => {
+							message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}`);
+						});
+					}else if(option === "off"){
+						s.setACL(false).then(() => {
+							message.channel.sendMessage(`:white_check_mark: ACL Turned off, ${message.author.username}.`);
+						}).catch((e) => {
+							message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}`);
+						});
+					}else{
+						message.channel.sendMessage(`:x: That's not a valid option, ${message.author.username}`);
+					}
+				}else{
+					message.channel.sendMessage(`:x: Only the server owner can change between ACL states, ${message.author.username}.`);
+				}
+			}else{
+				message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+			}
+		},
+		Cooldown: 5,
+		Description: "Changes whether ACL should be on or off.",
+		Usage: "`state`",
+		Extra: {
+			States: ['`On`', '`Off`']
 		}
 	}
 }
