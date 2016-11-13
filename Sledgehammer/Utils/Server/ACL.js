@@ -12,17 +12,15 @@ class ACL{
 	}
 
 	AddNode(id, Node){
-		let Data = {id: this.Server.id};
-		Data = {ACLNodes: {}};
-		Data.ACLNodes[id] = [Node];
-		return Sledgehammer.rdb.r.table("Servers").insert(Data, {conflict: "update"}).run(Sledgehammer.rdb.conn);
+		let Data = {ACLNodes: {}};
+		Data.ACLNodes[id] = Sledgehammer.rdb.r.row("ACLNodes")(id).default([]).append(Node);
+		return Sledgehammer.rdb.r.table("Servers").get(this.Server.id).update(Data).run(Sledgehammer.rdb.conn);
 	}
 
 	AddNodes(id, Nodes){
-		let Data = {id: this.Server.id};
-		Data = {ACLNodes: {}};
-		Data.ACLNodes[id] = Nodes;
-		return Sledgehammer.rdb.r.table("Servers").insert(Data, {conflict: "update"}).run(Sledgehammer.rdb.conn);
+		let Data = {ACLNodes: {}};
+		Data.ACLNodes[id] = Sledgehammer.rdb.r.row("ACLNodes")(id).default([]).append(Nodes);
+		return Sledgehammer.rdb.r.table("Servers").get(this.Server.id).update(Data).run(Sledgehammer.rdb.conn);
 	}
 
 	setACL(State){
