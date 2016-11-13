@@ -4,7 +4,7 @@ const Token = require("./token.json").token;
 const fs = require("fs");
 const rethink = require('rethinkdb');
 
-global.Server = require("./Utils/Data.js");
+global.Server = require("./Utils/Server/Index.js");
 global.DateFormat = require("./Utils/DateFormat.js");
 
 let Commands = {
@@ -129,7 +129,7 @@ Sledgehammer.on("ready", () => {
 });
 
 Sledgehammer.on("guildMemberAdd", (member) => {
-	let s = new Server(member.guild.id);
+	let s = new Server.Server(member.guild.id);
 	s.modlog.then((ml) => {
 		s.channels.then((channels) => {
 			let toSend = `${member.user.username} Joined the server.`;
@@ -166,7 +166,7 @@ Sledgehammer.on("guildMemberAdd", (member) => {
 });
 
 Sledgehammer.on("guildMemberRemove", (member) => {
-	let s = new Server(member.guild.id);
+	let s = new Server.Server(member.guild.id);
 	s.modlog.then((ml) => {
 		s.channels.then((channels) => {
 			let toSend = `${member.user.username} Left the server.`;
@@ -203,7 +203,7 @@ Sledgehammer.on("guildMemberRemove", (member) => {
 });
 
 Sledgehammer.on("guildBanRemove", (guild, member) => {
-	let s = new Server(guild.id);
+	let s = new Server.Server(guild.id);
 	s.messages.then((messages) => {
 		if(messages !== null){
 			if(messages.unban){
@@ -229,7 +229,7 @@ Sledgehammer.on('messageUpdate', (oldMessage, newMessage) => {
 	if(newMessage.channel.type !== "text"){
 		return;
 	}
-	let s = new Server(newMessage.guild.id); // Make a new 'Server' class mapped to the current server ID
+	let s = new Server.Server(newMessage.guild.id); // Make a new 'Server' class mapped to the current server ID
 	
 	s.exists.then((ex) => {
 
@@ -367,177 +367,194 @@ Sledgehammer.on("message", (message) => {
 		return;
 		message.guild = {id: "0"};
 	}
-	let s = new Server(message.guild.id); // Make a new 'Server' class mapped to the current server ID
+	let s = new Server.Server(message.guild.id); // Make a new 'Server' class mapped to the current server ID
+	let ACL = new Server.ACL(s);
+
 	
 	s.exists.then((ex) => {
+		ACL.ACLState.then((ACLState) => {
+			ACL.ACLNodes(message.author.id).then((Nodes) => {
+				let Args = message.content.replace(/\s\s+/g, " ").split(" ");
+				let Time = new Date().toUTCString();
 
-		let Args = message.content.replace(/\s\s+/g, " ").split(" ");
-		let Time = new Date().toUTCString();
+				if(!ex){
+					s.create();
+				}
 
-		if(!ex){
-			s.create();
-		}
+				s.prefix.then((prefix) => {
 
-		s.prefix.then((prefix) => {
+					s.blacklist.then((list) => { // Get the list of blacklisted words
 
-			s.blacklist.then((list) => { // Get the list of blacklisted words
+						s.messages.then((messages) => {
 
-				s.messages.then((messages) => {
-
-					if(list === null){
-						list = [];
-					}
-
-					if(message.content.replace(/\s\s+/g, " ").containsArray(list)){
-						if(Args[0].toLowerCase() === prefix+"whitelist"){
-							if(!message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
-								message.delete();
-								if(messages !== null){
-									if(messages.blacklistdelete){
-										s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
-									}
-								}
-								return;
+							if(list === null){
+								list = [];
 							}
-						}else{
-							message.delete();
-							if(messages !== null){
-								if(messages.blacklistdelete){
-									s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
-								}
-							}
-							return;
-						}
-					}
 
-					s.linkFilter(message.channel.id).then((filter) => {
-						if(filter !== null){
-							if(!message.channel.permissionsFor(message.author).hasPermission("EMBED_LINKS")){
-								s.channels.then((channels) => {
-									let ToSend = {
-										Type: "",
-										From: "",
-										Channel: ""
-									};
-
-									if(filter.type === "all"){
-										let q = new RegExp(
-										"^" +
-										// protocol identifier
-										"(?:(?:https?|ftp)://)" +
-										// user:pass authentication
-										"(?:\\S+(?::\\S*)?@)?" +
-										"(?:" +
-										// IP address exclusion
-										// private & local networks
-										"(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
-										"(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
-										"(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
-										// IP address dotted notation octets
-										// excludes loopback network 0.0.0.0
-										// excludes reserved space >= 224.0.0.0
-										// excludes network & broacast addresses
-										// (first & last IP address of each class)
-										"(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
-										"(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
-										"(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
-										"|" +
-										// host name
-										"(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
-										// domain name
-										"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
-										// TLD identifier
-										"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
-										// TLD may end with dot
-										"\\.?" +
-										")" +
-										// port number
-										"(?::\\d{2,5})?" +
-										// resource path
-										"(?:[/?#]\\S*)?" +
-										"$", "i"
-										);
-										if(q.test(message.content)){
-											message.delete();
-											ToSend.Type = "link";
-											ToSend.From = newMessage.author;
-											ToSend.Channel = newMessage.channel;
-										}
-									}else if(filter.type === "invite" || filter.type === "invites"){
-										let q = new RegExp("(?:discord(?:\.gg|app\.com\/invite)\/(?<id>([\w]{16}|(?:[\w]+-?){3})))", "gi");
-										if(q.test(message.content)){
-											message.delete();
-											ToSend.Type = "invite";
-											ToSend.From = message.author;
-											ToSend.Channel = message.channel
-										}
-									}
-
-									if(messages !== null){
-										if(messages.linkdelete){
-											if(channels.linkLog !== null){
-
-												let toSend = channels.linkLog.message;
-												let time = new Date();
-												toSend = toSend.replace(/\${type}/gi, ToSend.Type);
-
-												toSend = toSend.replace(/\${From}/gi, ToSend.From);
-												toSend = toSend.replace(/\${FromName}/gi, ToSend.From.username);
-												toSend = toSend.replace(/\${FromID}/gi, ToSend.From.id);
-												toSend = toSend.replace(/\${FromDiscrim}/gi, ToSend.From.discriminator);
-
-												toSend = toSend.replace(/\${Channel}/gi, ToSend.Channel);
-												toSend = toSend.replace(/\${ChannelName}/gi, ToSend.Channel.name);
-												toSend = toSend.replace(/\${ChannelID}/gi, ToSend.Channel.id);
-
-												toSend = DateFormat.formatDate(time, toSend);
-
-												message.guild.channels.find("id", channels.linkLog).sendMessage(toSend).catch((e) => {console.dir(e)});
-											}else{
-												s.sendModlog(message, `Removed ${ToSend.Type} from ${ToSend.From.username} in ${ToSend.Channel}`);
+							if(message.content.replace(/\s\s+/g, " ").containsArray(list)){
+								if(Args[0].toLowerCase() === prefix+"whitelist"){
+									if(ACLState && !ACL.checkACL(Nodes, ["messages.blacklist.ignore", "messages.blacklist.manage", "messages.blacklist.*", "messages.*"], "any") || !ACLState && !message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
+										message.delete();
+										if(messages !== null){
+											if(messages.blacklistdelete){
+												s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
 											}
 										}
+										return;
 									}
-
-								});
-							}
-						}
-					});
-
-					if(message.author.bot) return;
-
-					if(Args[0].startsWith(prefix)){
-						let Command = Args[0].replace(prefix, "").toLowerCase();
-
-						if(Command in Commands.list){
-							try{
-								let now = new Date().valueOf();
-								if(Cooldown.firstTime[Command] === undefined){
-									Cooldown.firstTime[Command] = {};
-								}
-								if(Cooldown.lastExecTime[Command] === undefined){
-									Cooldown.lastExecTime[Command] = {};
-								}
-
-								let FirstTime = Cooldown.firstTime[Command][message.author.id] || false;
-								let last = Cooldown.lastExecTime[Command][message.author.id] || 0;
-
-
-								if(now <= last+Utils.resolveCooldown(Command)*1000 && FirstTime){
-									// Cooldown
-									let time = Math.round(((last + Utils.resolveCooldown(Command) * 1000) - now) / 1000);
-									message.channel.sendMessage(`You need to calm down, ${message.author.username}. :hourglass: ${time} seconds`);
 								}else{
-									Args.shift();
-									Utils.resolveCommand(Command).Execute(Args, message);
-									Cooldown.firstTime[Command][message.author.id] = true;
-									Cooldown.lastExecTime[Command][message.author.id] = now;
+									if(ACLState && !ACL.checkACL(Nodes, ["messages.blacklist.ignore", "messages.blacklist.manage", "messages.blacklist.*", "messages.*"], "any") || !ACLState && !message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
+										message.delete();
+										if(messages !== null){
+											if(messages.blacklistdelete){
+												s.sendModlog(message, `[${Time}] Removed message from ${message.author.username} (${message.author.id})`)
+											}
+										}
+										return;
+									}
 								}
-							}catch(e){
-								console.log(e);
-							};
-						}
-					}
+							}
+
+							s.linkFilter(message.channel.id).then((filter) => {
+								if(filter !== null){
+									s.channels.then((channels) => {
+										let ToSend = {
+											Type: "",
+											From: "",
+											Channel: "",
+											ShouldSend: false
+										};
+
+										if(filter.type === "all"){
+											if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*"], "any") || !ACLState && !message.channel.permissionsFor(message.author).hasPermission("EMBED_LINKS")){
+												let q = new RegExp(
+												"^" +
+												// protocol identifier
+												"(?:(?:https?|ftp)://)" +
+												// user:pass authentication
+												"(?:\\S+(?::\\S*)?@)?" +
+												"(?:" +
+												// IP address exclusion
+												// private & local networks
+												"(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
+												"(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
+												"(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
+												// IP address dotted notation octets
+												// excludes loopback network 0.0.0.0
+												// excludes reserved space >= 224.0.0.0
+												// excludes network & broacast addresses
+												// (first & last IP address of each class)
+												"(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
+												"(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
+												"(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
+												"|" +
+												// host name
+												"(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
+												// domain name
+												"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
+												// TLD identifier
+												"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
+												// TLD may end with dot
+												"\\.?" +
+												")" +
+												// port number
+												"(?::\\d{2,5})?" +
+												// resource path
+												"(?:[/?#]\\S*)?" +
+												"$", "i"
+												);
+												if(q.test(message.content)){
+													message.delete();
+													ToSend.Type = "link";
+													ToSend.From = newMessage.author;
+													ToSend.Channel = newMessage.channel;
+													ToSend.ShouldSend = true;
+												}
+											}
+										}else if(filter.type === "invite" || filter.type === "invites"){
+											if(ACLState && !ACL.checkACL(Nodes, ["messages.links.invites", "messages.links.*", "messages.*"], "any") || !ACLState && !message.channel.permissionsFor(message.author).hasPermission("EMBED_LINKS")){
+												let q = new RegExp("(?:discord(?:\.gg|app\.com\/invite)\/(?<id>([\w]{16}|(?:[\w]+-?){3})))", "gi");
+												if(q.test(message.content)){
+													message.delete();
+													ToSend.Type = "invite";
+													ToSend.From = message.author;
+													ToSend.Channel = message.channel;
+													ToSend.ShouldSend = true;
+												}
+											}
+										}
+
+										if(messages !== null){
+											if(messages.linkdelete){
+												if(ToSend.ShouldSend){
+													if(channels.linkLog !== null){
+														let toSend = channels.linkLog.message;
+														let time = new Date();
+														toSend = toSend.replace(/\${type}/gi, ToSend.Type);
+
+														toSend = toSend.replace(/\${From}/gi, ToSend.From);
+														toSend = toSend.replace(/\${FromName}/gi, ToSend.From.username);
+														toSend = toSend.replace(/\${FromID}/gi, ToSend.From.id);
+														toSend = toSend.replace(/\${FromDiscrim}/gi, ToSend.From.discriminator);
+
+														toSend = toSend.replace(/\${Channel}/gi, ToSend.Channel);
+														toSend = toSend.replace(/\${ChannelName}/gi, ToSend.Channel.name);
+														toSend = toSend.replace(/\${ChannelID}/gi, ToSend.Channel.id);
+
+														toSend = DateFormat.formatDate(time, toSend);
+
+														message.guild.channels.find("id", channels.linkLog).sendMessage(toSend).catch((e) => {console.dir(e)});
+													}else{
+														s.sendModlog(message, `Removed ${ToSend.Type} from ${ToSend.From.username} in ${ToSend.Channel}`);
+													}
+												}
+											}
+										}
+
+									});
+								}
+							});
+
+							if(message.author.bot) return;
+
+							if(Args[0].startsWith(prefix)){
+								let Command = Args[0].replace(prefix, "").toLowerCase();
+
+								if(Command in Commands.list){
+									try{
+										let now = new Date().valueOf();
+										if(Cooldown.firstTime[Command] === undefined){
+											Cooldown.firstTime[Command] = {};
+										}
+										if(Cooldown.lastExecTime[Command] === undefined){
+											Cooldown.lastExecTime[Command] = {};
+										}
+
+										let FirstTime = Cooldown.firstTime[Command][message.author.id] || false;
+										let last = Cooldown.lastExecTime[Command][message.author.id] || 0;
+
+
+										if(now <= last+Utils.resolveCooldown(Command)*1000 && FirstTime){
+											// Cooldown
+											let time = Math.round(((last + Utils.resolveCooldown(Command) * 1000) - now) / 1000);
+											message.channel.sendMessage(`You need to calm down, ${message.author.username}. :hourglass: ${time} seconds`);
+										}else{
+											Args.shift();
+											Utils.resolveCommand(Command).Execute(Args, message);
+											Cooldown.firstTime[Command][message.author.id] = true;
+											Cooldown.lastExecTime[Command][message.author.id] = now;
+										}
+									}catch(e){
+										console.log(e);
+									};
+								}
+							}
+						});
+					}).catch((e) => {
+						console.dir(e);
+					});
+				}).catch((e) => {
+					console.dir(e);
 				});
 			}).catch((e) => {
 				console.dir(e);

@@ -26,61 +26,64 @@ module.exports = {
 
 	help: {
 		Execute: (Args, message) => {
-			let prefix = "=>";
-			if(Args.length >= 1){
-				let Command = Args[0].toLowerCase();
-				if(Command in Commands.list){
-					let helpMsg = `__**${Command.capFirst()}**__\n\n`;
-					helpMsg += Commands.all[Commands.list[Command]][Command].Description+"\n\n";
+			let s = new Server.Server(message.guild.id);
+			s.prefix.then((prefix) => {
+				if(Args.length >= 1){
+					let Command = Args[0].toLowerCase();
+					if(Command in Commands.list){
 
-					helpMsg += `**Usage: **\`${prefix}${Command.capFirst()}\` ${Commands.all[Commands.list[Command]][Command].Usage}\n\n`;
-					helpMsg += `**Cooldown: ** ${Commands.all[Commands.list[Command]][Command].Cooldown.formatNumber()} seconds.`;
-					if(Commands.all[Commands.list[Command]][Command].hasOwnProperty("Extra")){
-						for(let Extra in Commands.all[Commands.list[Command]][Command].Extra){
-							helpMsg += "\n";
-							helpMsg += `**${Extra.replace("__", " ")}: `;
-							if(Array.isArray(Commands.all[Commands.list[Command]][Command].Extra[Extra])){
-								helpMsg += `${Commands.all[Commands.list[Command]][Command].Extra[Extra].join(', ')}`;
-								helpMsg += "**";
+						let helpMsg = `__**${Command.capFirst()}**__\n\n`;
+						helpMsg += Commands.all[Commands.list[Command]][Command].Description+"\n\n";
+
+						helpMsg += `**Usage: **\`${prefix}${Command.capFirst()}\` ${Commands.all[Commands.list[Command]][Command].Usage}\n\n`;
+						helpMsg += `**Cooldown: ** ${Commands.all[Commands.list[Command]][Command].Cooldown.formatNumber()} seconds.`;
+						if(Commands.all[Commands.list[Command]][Command].hasOwnProperty("Extra")){
+							for(let Extra in Commands.all[Commands.list[Command]][Command].Extra){
+								helpMsg += "\n";
+								helpMsg += `**${Extra.replace("__", " ")}: `;
+								if(Array.isArray(Commands.all[Commands.list[Command]][Command].Extra[Extra])){
+									helpMsg += `${Commands.all[Commands.list[Command]][Command].Extra[Extra].join(', ')}`;
+									helpMsg += "**";
+								}
 							}
 						}
-					}
 
-					message.channel.sendMessage(helpMsg);
-				}
-			}else{	
-				let msg = `Okay, ${message.author.username}, check your messages.`;
-				let x = {};
-
-				let m = "```ini\n";
-				Object.keys(Commands.all).map((a) => {
-					if(x[a] === undefined){
-						x[a] = [];
+						message.channel.sendMessage(helpMsg);
 					}
-					Commands.all[a].Metadata.List.map((b) => {
-						if(Commands.all[a][b] !== undefined){
-							if(!Commands.all[a][b].hasOwnProperty("Unlisted")){
-								x[a].push(`${b}`);
-							}
+				}else{	
+					let msg = `Okay, ${message.author.username}, check your messages.`;
+					let x = {};
+
+					let m = "```ini\n";
+					Object.keys(Commands.all).map((a) => {
+						if(x[a] === undefined){
+							x[a] = [];
 						}
-					})
-				});
-
-				Object.keys(x).map((a) => {
-					let b = `${Commands.all[a].Metadata.Name}`
-					m += `[${b}]\n${x[a].join(", ")}\n`;
-				});
-
-				m += "```";
-				
-				message.channel.sendMessage(msg).then(() => {
-					message.author.sendMessage(m).catch((e) => {
-						console.dir(e);
+						Commands.all[a].Metadata.List.map((b) => {
+							if(Commands.all[a][b] !== undefined){
+								if(!Commands.all[a][b].hasOwnProperty("Unlisted")){
+									x[a].push(`${b}`);
+								}
+							}
+						})
 					});
-				}).catch((e) => {
-					console.dir(e);
-				})
-			}
+
+					Object.keys(x).map((a) => {
+						let b = `${Commands.all[a].Metadata.Name}`
+						m += `[${b}]\n${x[a].join(", ")}\n`;
+					});
+
+					m += "```";
+					
+					message.channel.sendMessage(msg).then(() => {
+						message.author.sendMessage(m).catch((e) => {
+							console.dir(e);
+						});
+					}).catch((e) => {
+						console.dir(e);
+					})
+				}
+			});
 		},
 		Description: "Sends a list of the commands that can be used.",
 		Cooldown: 10,

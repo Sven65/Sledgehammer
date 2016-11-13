@@ -50,7 +50,7 @@ module.exports = {
 		Execute: (Args, message) => {
 			if(Args.length >= 1){
 				let Mentions = message.mentions.channels;
-				let s = new Server(message.guild.id);
+				let s = new Server.Server(message.guild.id);
 				if(Mentions.size >= 1){
 					if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
 						if(message.guild.channels.find("id", Mentions.first().id).permissionsFor(Sledgehammer.user).hasPermission("MANAGE_MESSAGES")){
@@ -114,7 +114,7 @@ module.exports = {
 
 	config: {
 		Execute: (Args, message) => {
-			let s = new Server(message.guild.id);
+			let s = new Server.Server(message.guild.id);
 			s.all.then((server) => {
 				if(server !== null){
 					let toSend = `__**❯ ${message.guild.name} configuration ❮**__`;
@@ -147,7 +147,7 @@ module.exports = {
 
 	setprefix: {
 		Execute: (Args, message) => {
-			let s = new Server(message.guild.id);
+			let s = new Server.Server(message.guild.id);
 			if(Args.length >= 1){
 				message.guild.fetchMember(message.author).then((user) => {
 					if(user.roles.exists("name", "Sledgehammer Configurator")){
@@ -192,11 +192,11 @@ module.exports = {
 					- Role Events
 						onRoleCreate, onRoleDelete, onRoleUpdate
 			*/
-			let s = new Server(message.guild.id);
+			let s = new Server.Server(message.guild.id);
 			if(Args.length >= 1){
 				message.guild.fetchMember(message.author).then((user) => {
 					if(user.roles.exists("name", "Sledgehammer Configurator")){
-						let s = new Server(message.guild.id);
+						let s = new Server.Server(message.guild.id);
 						let Channels = message.mentions.channels;
 						switch(Args[0].toLowerCase()){
 							case "onjoin":
@@ -515,7 +515,7 @@ module.exports = {
 
 	message: {
 		Execute: (Args, message) => {
-			let s = new Server(message.guild.id);
+			let s = new Server.Server(message.guild.id);
 			if(Args.length >= 2){
 				message.guild.fetchMember(message.author).then((user) => {
 					if(user.roles.exists("name", "Sledgehammer Configurator")){
@@ -675,7 +675,7 @@ module.exports = {
 	},
 	role: {
 		Execute: (Args, message) => {
-			let s = new Server(message.guild.id);
+			let s = new Server.Server(message.guild.id);
 			if(Args.length >= 2){
 				message.guild.fetchMember(message.author).then((user) => {
 					if(user.roles.exists("name", "Sledgehammer Configurator")){
@@ -721,18 +721,19 @@ module.exports = {
 
 	acl: {
 		Execute: (Args, message) => {
-			let s = new Server(message.guild.id);
+			let s = new Server.Server(message.guild.id);
+			let ACL = new Server.ACL(s);
 			if(Args.length >= 1){
-				if(message.author.id === message.guild.ownerId){
+				if(message.author.id === message.guild.ownerID){
 					let option = Args[0].toLowerCase();
 					if(option === "on"){
-						s.setACL(true).then(() => {
+						ACL.setACL(true).then(() => {
 							message.channel.sendMessage(`:white_check_mark: ACL Turned on, ${message.author.username}.`);
 						}).catch((e) => {
 							message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}`);
 						});
 					}else if(option === "off"){
-						s.setACL(false).then(() => {
+						ACL.setACL(false).then(() => {
 							message.channel.sendMessage(`:white_check_mark: ACL Turned off, ${message.author.username}.`);
 						}).catch((e) => {
 							message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}`);

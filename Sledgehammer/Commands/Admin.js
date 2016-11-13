@@ -141,7 +141,7 @@ let Utils = {
 
 module.exports = {
 	Metadata: {
-		List: ['kick', 'ban', 'clean', 'blacklist', 'whitelist', 'mute', 'unmute'],
+		List: ['kick', 'ban', 'clean', 'blacklist', 'whitelist', 'mute', 'unmute', 'grant'],
 		Name: "Admin Commands",
 		Description: "Administrative commands"
 	},
@@ -156,7 +156,7 @@ module.exports = {
 						if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("KICK_MEMBERS")){
 							let toSend = "";
 							Utils.Kick(Mentions, message).then((Kicked) => {
-								let s = new Server(message.guild.id);
+								let s = new Server.Server(message.guild.id);
 								let and = "";
 								let kicker = message.author.username;
 								let kicks = `${Kicked.length>1?'users':'user'}`;
@@ -216,7 +216,7 @@ module.exports = {
 	ban: {
 		Execute: (Args, message) => {
 			let Member = message.guild.fetchMember(message.author);
-			let s = new Server(message.guild.id);
+			let s = new Server.Server(message.guild.id);
 			if(Args.length >= 1){
 				let Mentions = message.mentions.users;
 				if(Mentions.size >= 1){
@@ -372,7 +372,7 @@ module.exports = {
 					if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_ROLES_OR_PERMISSIONS")){
 						if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("MANAGE_ROLES_OR_PERMISSIONS")){
 							
-							let s = new Server(message.guild.id);
+							let s = new Server.Server(message.guild.id);
 
 							s.muteRole.then((role) => {
 								if(role !== null){
@@ -451,7 +451,7 @@ module.exports = {
 					if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_ROLES_OR_PERMISSIONS")){
 						if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("MANAGE_ROLES_OR_PERMISSIONS")){
 							
-							let s = new Server(message.guild.id);
+							let s = new Server.Server(message.guild.id);
 
 							s.muteRole.then((role) => {
 								if(role !== null){
@@ -521,4 +521,82 @@ module.exports = {
 		Description: "Unmutes members on the server.",
 		Usage: "`@user` `[@user]` `[@user]...`"
 	},
+
+	grant: {
+		Execute: (Args, message) => {
+			if(Args.length >= 2){
+				let Mentions = message.mentions.users;
+				if(Mentions.size >= 1){
+					if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_ROLES_OR_PERMISSIONS")){
+						let s = new Server.Server(message.guild.id);
+						let ACL = new Server.ACL(s);
+
+						let user = Mentions.first();
+
+						if(user === undefined || user === null){
+							message.channel.sendMessage(`:x: Please mention a valid user, ${message.author.username}.`);
+							return;
+						}
+
+						Args.shift();
+
+						if(Args.length === 1){
+							let node = Args.join(" ").toLowerCase();
+							if(Server.ACLNodes.indexOf(node) > -1){
+								ACL.AddNode(user.id, node).then(() => {
+									message.channel.sendMessage(`:white_check_mark: Added permission node \`${node}\` to ${user.username}.`);
+								}).catch((e) => {
+									console.log(e.stack);
+									message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								});
+							}else{
+								message.channel.sendMessage(`:x: Invalid permission node, ${message.author.username}.`);
+							}
+						}else{
+							let NodesToAdd = [];
+							Args.map((NodeString) => {
+								if(Server.ACLNodes.indexOf(NodeString.toLowerCase()) > -1){
+									NodesToAdd.push(NodeString.toLowerCase());
+								}
+							});
+
+							if(NodesToAdd.length >= 1){
+								ACL.AddNodes(user.id, NodesToAdd).then(() => {
+									let ToSend = `:white_check_mark: Added node${NodesToAdd.length>1?'s':''}`;
+									NodesToAdd.map((Node, Count) => {
+										if(Count === NodesToAdd.length){
+											if(NodesToAdd.length > 1){
+												ToSend += ` and \`${Node}\``;
+											}else{
+												ToSend += ` \`${Node}\``;
+											}
+										}else{
+											ToSend += ` \`${Node}\`,`;
+										}
+									});
+									ToSend += `to user ${user.username}.`;
+									message.channel.sendMessage(ToSend);
+								}).catch((e) => {
+									console.log(e.stack);
+									message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								});
+							}else{
+								message.channel.sendMessage(`:x: No valid permission nodes found, ${message.author.username}.`);
+							}
+						}
+
+					}else{
+						message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to manage roles.`);
+					}
+				}else{
+					message.channel.sendMessage(`:x: Please tell me who to add the permissions to, ${message.author.username}.`);
+				}
+			}else{
+				message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+			}
+		},
+		Cooldown: 5,
+		Description: "Grants a permission to a user",
+		Usage: "`@user`, `Permission Node`, `[Permission Node]...`"
+	}
 }

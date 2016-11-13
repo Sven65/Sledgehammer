@@ -1,0 +1,11 @@
+[
+	"messages.blacklist.ignored",
+	"messages.blacklist.manage",
+	"messages.blacklist.*",
+
+	"messages.links.embed",
+	"messages.links.invite",
+	"messages.links.*",
+
+	"messages.*"
+]
