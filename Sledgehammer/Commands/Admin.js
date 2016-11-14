@@ -148,6 +148,8 @@ module.exports = {
 
 	kick: {
 		Execute: (Args, message) => {
+			let s = new Server.Server(message.guild.id);
+			let ACL = new Server.ACL(s);
 			let Member = message.guild.fetchMember(message.author);
 			if(Args.length >= 1){
 				let Mentions = message.mentions.users;
@@ -156,7 +158,7 @@ module.exports = {
 						if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("KICK_MEMBERS")){
 							let toSend = "";
 							Utils.Kick(Mentions, message).then((Kicked) => {
-								let s = new Server.Server(message.guild.id);
+								
 								let and = "";
 								let kicker = message.author.username;
 								let kicks = `${Kicked.length>1?'users':'user'}`;
