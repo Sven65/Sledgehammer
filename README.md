@@ -79,7 +79,7 @@ ____
   - Leaves ✔
     - Message ✔
     - Channel ✔
-  - Unbans 
+  - Unbans  
     - Message 
     - Channel 
   - Mutes ✔

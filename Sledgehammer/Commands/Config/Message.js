@@ -145,6 +145,57 @@ module.exports = {
 								message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
 							}
 						break;
+						case "emojicreate":
+							if(Args[1].toLowerCase() === "true"){
+								s.setMessage("emojicreate", true).then(() => {
+									message.channel.sendMessage(`:white_check_mark: Messages will now be sent when an emoji is created.`);
+								}).catch((e) => {
+									message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								});
+							}else if(Args[1].toLowerCase() === "false"){
+								s.setMessage("emojicreate", false).then(() => {
+									message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when an emoji is created.`);
+								}).catch((e) => {
+									message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								});
+							}else{
+								message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+							}
+						break;
+						case "emojidelete":
+							if(Args[1].toLowerCase() === "true"){
+								s.setMessage("emojidelete", true).then(() => {
+									message.channel.sendMessage(`:white_check_mark: Messages will now be sent when an emoji is deleted.`);
+								}).catch((e) => {
+									message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								});
+							}else if(Args[1].toLowerCase() === "false"){
+								s.setMessage("emojidelete", false).then(() => {
+									message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when an emoji is deleted.`);
+								}).catch((e) => {
+									message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								});
+							}else{
+								message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+							}
+						break;
+						case "emojiupdate":
+							if(Args[1].toLowerCase() === "true"){
+								s.setMessage("emojiupdate", true).then(() => {
+									message.channel.sendMessage(`:white_check_mark: Messages will now be sent when an emoji is updated.`);
+								}).catch((e) => {
+									message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								});
+							}else if(Args[1].toLowerCase() === "false"){
+								s.setMessage("emojiupdate", false).then(() => {
+									message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent when an emoji is updated.`);
+								}).catch((e) => {
+									message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								});
+							}else{
+								message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+							}
+						break;
 					}
 				}else{
 					message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You need a role called \`Sledgehammer Configurator\`.`);

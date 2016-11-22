@@ -169,6 +169,25 @@ Sledgehammer.on('messageUpdate', (oldMessage, newMessage) => {
 	Handlers.messageUpdate.Handle(oldMessage, newMessage);
 });
 
+// Emoji
+
+Sledgehammer.on("guildEmojiCreate", (emoji) => {
+	console.log(emoji);
+	try{
+		Handlers.guildEmojiCreate.Handle(emoji);
+	}catch(e){
+		console.dir(e.stack);
+	}
+});
+
+Sledgehammer.on("guildEmojiDelete", (emoji) => {
+	Handlers.guildEmojiDelete.Handle(emoji);
+});
+
+Sledgehammer.on("guildEmojiUpdate", (oldEmoji, newEmoji) => {
+	Handlers.guildEmojiUpdate.Handle(oldEmoji, newEmoji);
+});
+
 Sledgehammer.on("message", (message) => {
 	Handlers.messageCreate.Handle(message);
 });

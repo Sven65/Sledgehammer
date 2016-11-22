@@ -189,7 +189,7 @@ module.exports = class Server{
 		}).run(Sledgehammer.rdb.conn);
 	}
 
-	setemojiUpdate(channel, message){
+	setEmojiUpdate(channel, message){
 		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
 			channels: {
 				emojiUpdate: {
