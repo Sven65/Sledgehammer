@@ -148,8 +148,6 @@ module.exports = {
 
 	kick: {
 		Execute: (Args, message) => {
-			let s = new Server.Server(message.guild.id);
-			let ACL = new Server.ACL(s);
 			let Member = message.guild.fetchMember(message.author);
 			if(Args.length >= 1){
 				let Mentions = message.mentions.users;
@@ -158,7 +156,7 @@ module.exports = {
 						if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("KICK_MEMBERS")){
 							let toSend = "";
 							Utils.Kick(Mentions, message).then((Kicked) => {
-								
+								let s = new Server.Server(message.guild.id);
 								let and = "";
 								let kicker = message.author.username;
 								let kicks = `${Kicked.length>1?'users':'user'}`;
@@ -388,7 +386,7 @@ module.exports = {
 											let mutes = `${Muted.length>1?'users':'user'}`;
 											toSend = `:white_check_mark: ${message.author.username} Muted ${Muted.length>1?'users':'user'}`;
 											if(Muted.length >= 2){
-												and = Kicked.pop();
+												and = Muted.pop();
 											}
 											mutes += ` ${Muted.join(',')} ${and.length>0?'and':''} ${and.length>0?and:''}`;
 											toSend += ` ${Muted.join(',')} ${and.length>0?'and':''} ${and.length>0?and:''}`;
@@ -467,7 +465,7 @@ module.exports = {
 											let mutes = `${Unmuted.length>1?'users':'user'}`;
 											toSend = `:white_check_mark: ${message.author.username} Unmuted ${Unmuted.length>1?'users':'user'}`;
 											if(Unmuted.length >= 2){
-												and = Kicked.pop();
+												and = Unmuted.pop();
 											}
 											mutes += ` ${Unmuted.join(',')} ${and.length>0?'and':''} ${and.length>0?and:''}`;
 											toSend += ` ${Unmuted.join(',')} ${and.length>0?'and':''} ${and.length>0?and:''}`;
