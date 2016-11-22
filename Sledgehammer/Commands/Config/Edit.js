@@ -314,15 +314,102 @@ module.exports = {
 						break;
 
 						case "onemojicreate":
+							if(Args.length >= 2){
+								if(Args[1].toLowerCase() === "message"){
+									let channel = message.channel.id;
+									s.modlog.then((ml) => {
+										if(ml !== null){
+											channel = ml;
+										}
 
+										if(Channels.size >= 1){
+											channel = Channels.first().id;
+											Args.splice(Args.indexOf(`<#${channel}>`), 1);
+										}
+
+										Args.shift();
+										Args.shift();
+										let msg = Args.join(" ");
+										s.setEmojiCreate(channel, msg).then(() => {
+											message.channel.sendMessage(`:white_check_mark: onEmojiCreate message set to \`${msg}\`.`);
+										}).catch((e) => {
+											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										});
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else{
+									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+								}
+							}else{
+								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+							}
 						break;
 
 						case "onemojidelete":
+							if(Args.length >= 2){
+								if(Args[1].toLowerCase() === "message"){
+									let channel = message.channel.id;
+									s.modlog.then((ml) => {
+										if(ml !== null){
+											channel = ml;
+										}
 
+										if(Channels.size >= 1){
+											channel = Channels.first().id;
+											Args.splice(Args.indexOf(`<#${channel}>`), 1);
+										}
+
+										Args.shift();
+										Args.shift();
+										let msg = Args.join(" ");
+										s.setEmojiDelete(channel, msg).then(() => {
+											message.channel.sendMessage(`:white_check_mark: onEmojiDelete message set to \`${msg}\`.`);
+										}).catch((e) => {
+											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										});
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else{
+									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+								}
+							}else{
+								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+							}
 						break;
 
 						case "onemojiupdate":
+							if(Args.length >= 2){
+								if(Args[1].toLowerCase() === "message"){
+									let channel = message.channel.id;
+									s.modlog.then((ml) => {
+										if(ml !== null){
+											channel = ml;
+										}
 
+										if(Channels.size >= 1){
+											channel = Channels.first().id;
+											Args.splice(Args.indexOf(`<#${channel}>`), 1);
+										}
+
+										Args.shift();
+										Args.shift();
+										let msg = Args.join(" ");
+										s.setEmojiUpdate(channel, msg).then(() => {
+											message.channel.sendMessage(`:white_check_mark: onEmojiUpdate message set to \`${msg}\`.`);
+										}).catch((e) => {
+											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										});
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
+								}else{
+									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+								}
+							}else{
+								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+							}
 						break;
 
 						case "onmemberupdate":

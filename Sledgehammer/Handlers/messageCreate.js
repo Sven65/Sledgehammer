@@ -145,14 +145,19 @@ module.exports = {
 
 													}
 												}else if(filter.type === "invite" || filter.type === "invites"){
-													if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*", "messages.links.invite"], "any") || !ACLState && !message.channel.permissionsFor(message.author).hasPermission("EMBED_LINKS")){
-														let Regex = new RegExp("(?:http\:\/\/)?(?:https\:\/\/)?discord.gg\/(?:[^\s]*)", "gi");
-														if(Regex.test(message.content)){
-															message.delete();
-															ToSend.Type = "invite";
-															ToSend.From = message.author;
-															ToSend.Channel = message.channel;
-															ToSend.ShouldSend = true;
+													if(message.channel !== null){
+														let Perms = message.channel.permissionsFor(message.author);
+														if(Perms !== null){
+															if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*", "messages.links.invite"], "any") || !ACLState && !Perms.hasPermission("EMBED_LINKS")){
+																let Regex = new RegExp("(?:http\:\/\/)?(?:https\:\/\/)?discord.gg\/(?:[^\s]*)", "gi");
+																if(Regex.test(message.content)){
+																	message.delete();
+																	ToSend.Type = "invite";
+																	ToSend.From = message.author;
+																	ToSend.Channel = message.channel;
+																	ToSend.ShouldSend = true;
+																}
+															}
 														}
 													}
 												}
@@ -198,8 +203,7 @@ module.exports = {
 
 										if(Args[0].startsWith(prefix)){
 											let Command = Args[0].replace(prefix, "").toLowerCase();
-
-											if(Command in Sledgehammer.Commands.list){
+											if(Sledgehammer.Commands.All.indexOf(Command) > -1){
 												try{
 													user.isFirstTime(Command).then((FirstTime) => {
 														user.getLastExec(Command).then((lastExecTime) => {

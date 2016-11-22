@@ -78,5 +78,4 @@ module.exports = {
 	Cooldown: 5,
 	Description: "Grants a permission to a user",
 	Usage: "`@user`, `Permission Node`, `[Permission Node]...`"
-}
 };

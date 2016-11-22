@@ -167,6 +167,39 @@ module.exports = class Server{
 		}).run(Sledgehammer.rdb.conn);
 	}
 
+	setEmojiCreate(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				emojiCreate: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
+	setEmojiDelete(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				emojiDelete: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
+	setemojiUpdate(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				emojiUpdate: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
 	// Getters
 
 	get exists(){

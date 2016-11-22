@@ -115,7 +115,7 @@ module.exports = {
 												}
 											}else if(filter.type === "invite" || filter.type === "invites"){
 												if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*", "messages.links.invite"], "any") || !ACLState && !newMessage.channel.permissionsFor(newMessage.author).hasPermission("EMBED_LINKS")){
-													let Regex = new RegExp("(?:discord(?:\.gg|app\.com\/invite)\/(?<id>([\w]{16}|(?:[\w]+-?){3})))", "gi");
+													let Regex = new RegExp("(?:http\:\/\/)?(?:https\:\/\/)?discord.gg\/(?:[^\s]*)", "gi");
 													if(Regex.test(newMessage.content)){
 														message.delete();
 														ToSend.Type = "invite";

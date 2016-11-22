@@ -11,8 +11,9 @@ global.DateFormat = require("./Utils/DateFormat.js");
 global.User = require("./Utils/User/Index.js");
 
 let Commands = {
-	all: [],
-	list: {}
+	All: [],
+	List: {},
+	Map: {}
 };
 
 String.prototype.capFirst = function(){
@@ -63,18 +64,20 @@ String.prototype.containsArray = function(array){
 const Utils = {
 	loadCommands: () => {
 		return new Promise((resolve, reject) => {
-			let Files = fs.readdirSync(__dirname+"/Commands");
-			for(let File of Files){
-				fs.lstat(__dirname+"/Commands/"+File, (err, stat) => {
-					if(!stat.isDirectory()){
+			try{
+				let Files = fs.readdirSync(__dirname+"/Commands");
+				for(let File of Files){
+					let stats = fs.lstatSync(__dirname+"/Commands/"+File);
+					if(!stats.isDirectory()){
 						if(File.endsWith('.js')){
 							try{
-								Commands.all[File.slice(0, -3)] = require(__dirname+'/Commands/'+File);
-								if(Commands.all[File.slice(0, -3)].Metadata !== undefined){
-									for(let Command of Commands.all[File.slice(0, -3)].Metadata.List){
-										Commands.list[Command] = File.slice(0, -3);
-									}
+								if(Commands.List["Other"] === undefined){
+									Commands.List["Other"] = {};
 								}
+								Commands.List["Other"][File.slice(0, -3).toLowerCase()] = require(__dirname+'/Commands/'+File);
+								Commands.All.push(File.slice(0, -3).toLowerCase());
+								Commands.Map[File.slice(0, -3).toLowerCase()] = "Other";
+								console.log("Loading "+File);
 							}catch(e){
 								console.dir(e);
 								reject(e);
@@ -85,14 +88,12 @@ const Utils = {
 						for(let DirFile of DirFiles){
 							if(DirFile.endsWith('.js')){
 								try{
-									Commands.all[File] = require(__dirname+'/Commands/'+File+"/"+DirFile);
-									console.log("Loading "+DirFile)
-									console.dir(JSON.stringify(Commands));
-									/*if(Commands.all[File].Metadata !== undefined){
-										for(let Command of Commands.all[File.slice(0, -3)].Metadata.List){
-											Commands.list[Command] = File.slice(0, -3);
-										}
-									}*/
+									if(Commands.List[File] === undefined){
+										Commands.List[File] = {};
+									}
+									Commands.List[File][DirFile.slice(0, -3).toLowerCase()] = require(__dirname+'/Commands/'+File+"/"+DirFile);
+									Commands.All.push(DirFile.slice(0, -3).toLowerCase());
+									Commands.Map[DirFile.slice(0, -3).toLowerCase()] = File;
 								}catch(e){
 									console.dir(e);
 									reject(e);
@@ -100,16 +101,18 @@ const Utils = {
 							}
 						}
 					}
-				});
+				}
+				resolve();
+			}catch(e){
+				reject(e);
 			}
-			resolve();
 		});
 	},
 	resolveCommand: (command) => {
-		return Commands.all[Commands.list[command]][command];
+		return Commands.List[Commands.Map[command]][command];
 	},
 	resolveCooldown: (command) => {
-		return Commands.all[Commands.list[command]][command].Cooldown;
+		return Commands.List[Commands.Map[command]][command].Cooldown;
 	}
 };
 

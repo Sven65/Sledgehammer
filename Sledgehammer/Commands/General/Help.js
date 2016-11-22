@@ -8,48 +8,55 @@ module.exports = {
 		let s = new Server.Server(message.guild.id);
 		s.prefix.then((prefix) => {
 			if(Args.length >= 1){
-				let Command = Args[0].toLowerCase();
-				if(Command in Commands.list){
+				try{
+					let Command = Args[0].toLowerCase();
+					if(Sledgehammer.Commands.All.indexOf(Command) > -1){
 
-					let helpMsg = `__**${Command.capFirst()}**__\n\n`;
-					helpMsg += Commands.all[Commands.list[Command]][Command].Description+"\n\n";
+						let helpMsg = `__**${Command.capFirst()}**__\n\n`;
+						helpMsg += Sledgehammer.Commands.List[Sledgehammer.Commands.Map[Command]][Command].Description+"\n\n";
 
-					helpMsg += `**Usage: **\`${prefix}${Command.capFirst()}\` ${Commands.all[Commands.list[Command]][Command].Usage}\n\n`;
-					helpMsg += `**Cooldown: ** ${Commands.all[Commands.list[Command]][Command].Cooldown.formatNumber()} seconds.`;
-					if(Commands.all[Commands.list[Command]][Command].hasOwnProperty("Extra")){
-						for(let Extra in Commands.all[Commands.list[Command]][Command].Extra){
-							helpMsg += "\n";
-							helpMsg += `**${Extra.replace("__", " ")}: `;
-							if(Array.isArray(Commands.all[Commands.list[Command]][Command].Extra[Extra])){
-								helpMsg += `${Commands.all[Commands.list[Command]][Command].Extra[Extra].join(', ')}`;
-								helpMsg += "**";
+						helpMsg += `**Usage: **\`${prefix}${Command.capFirst()}\` ${Sledgehammer.Commands.List[Sledgehammer.Commands.Map[Command]][Command].Usage}\n\n`;
+						helpMsg += `**Cooldown: ** ${Sledgehammer.Commands.List[Sledgehammer.Commands.Map[Command]][Command].Cooldown.formatNumber()} seconds.`;
+						if(Sledgehammer.Commands.List[Sledgehammer.Commands.Map[Command]][Command].hasOwnProperty("Extra")){
+							for(let Extra in Sledgehammer.Commands.List[Sledgehammer.Commands.Map[Command]][Command].Extra){
+								helpMsg += "\n";
+								helpMsg += `**${Extra.replace("__", " ")}: `;
+								if(Array.isArray(Sledgehammer.Commands.List[Sledgehammer.Commands.Map[Command]][Command].Extra[Extra])){
+									helpMsg += `${Sledgehammer.Commands.List[Sledgehammer.Commands.Map[Command]][Command].Extra[Extra].join(', ')}`;
+									helpMsg += "**";
+								}
 							}
 						}
-					}
 
-					message.channel.sendMessage(helpMsg);
+						message.channel.sendMessage(helpMsg);
+					}
+				}catch(e){
+					console.dir(e.stack);
 				}
-			}else{	
+			}else{
 				let msg = `Okay, ${message.author.username}, check your messages.`;
 				let x = {};
 
 				let m = "```ini\n";
-				Object.keys(Commands.all).map((a) => {
-					if(x[a] === undefined){
-						x[a] = [];
+				Sledgehammer.Commands.All.map((a) => {
+					let Group = Sledgehammer.Commands.Map[a];
+					if(x[Group] === undefined){
+						x[Group] = [];
 					}
-					Commands.all[a].Metadata.List.map((b) => {
-						if(Commands.all[a][b] !== undefined){
-							if(!Commands.all[a][b].hasOwnProperty("Unlisted")){
-								x[a].push(`${b}`);
-							}
-						}
-					})
-				});
 
+					let Commands = Sledgehammer.Commands.List[Group];
+
+					for(Command in Commands){
+						if(x[Group].indexOf(Command) === -1){
+							x[Group].push(Command);
+						}
+					}
+				});
 				Object.keys(x).map((a) => {
-					let b = `${Commands.all[a].Metadata.Name}`
-					m += `[${b}]\n${x[a].join(", ")}\n`;
+					console.log(a);
+					let b = x[a].join(", ");
+					console.log(b);
+					m += `[${a}]\n${b}\n`;
 				});
 
 				m += "```";
