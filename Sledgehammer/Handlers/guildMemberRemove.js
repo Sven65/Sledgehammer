@@ -18,9 +18,11 @@ module.exports = {
 
 				Guild.messages.then((messages) => {
 					if(messages !== null){
-						if(messages.join !== null){
-							if(ModLog !== null){
-								member.guild.channels.get(ModLog).sendMessage(Message);
+						if(messages.leave !== null){
+							if(messages.leave){
+								if(ModLog !== null){
+									member.guild.channels.get(ModLog).sendMessage(Message);
+								}
 							}
 						}else{
 							if(ModLog !== null){

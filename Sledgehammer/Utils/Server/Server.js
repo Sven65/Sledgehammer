@@ -43,7 +43,7 @@ module.exports = class Server{
 	}
 
 	removeLinkFilter(channel){
-		return Sledgehammer.rdb.r.db('Sledgehammer').table('Servers').get('241593567485755392').replace(Sledgehammer.rdb.r.row.without({linkFilter: channel})).run(Sledgehammer.rdb.conn);
+		return Sledgehammer.rdb.r.db('Sledgehammer').table('Servers').get(this.id).replace(Sledgehammer.rdb.r.row.without({linkFilter: channel})).run(Sledgehammer.rdb.conn);
 	}
 
 	linkFilter(channel){
@@ -109,6 +109,17 @@ module.exports = class Server{
 		}).run(Sledgehammer.rdb.conn);
 	}
 
+	setBlacklistDelete(channel, message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			channels: {
+				blacklistDelete: {
+					id: channel,
+					message: message
+				}
+			}
+		}).run(Sledgehammer.rdb.conn);
+	}
+
 	setUnMute(channel, message){
 		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
 			channels: {
@@ -121,7 +132,9 @@ module.exports = class Server{
 	}
 
 	setMessage(type, value){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({messages: {type: value}}).run(Sledgehammer.rdb.conn);
+		let data = {messages: {}};
+		data.messages[type] = value;
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update(data).run(Sledgehammer.rdb.conn);
 	}
 
 	setLeave(channel, message){
@@ -180,11 +193,15 @@ module.exports = class Server{
 	}
 
 	get joinLog(){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id)("joinLog").default(null).run(Sledgehammer.rdb.conn);
+		return Sledgehammer.rdb.r.table("Servers").get(this.id)("channels")("joinLog").default(null).run(Sledgehammer.rdb.conn);
 	}
 
 	get leaveLog(){
-		return Sledgehammer.rdb.r.table("Servers").get(this.id)("leaveLog").default(null).run(Sledgehammer.rdb.conn);
+		return Sledgehammer.rdb.r.table("Servers").get(this.id)("channels")("leaveLog").default(null).run(Sledgehammer.rdb.conn);
+	}
+
+	get unbanLog(){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id)("channels")("unbanLog").default(null).run(Sledgehammer.rdb.conn);
 	}
 
 	get messages(){

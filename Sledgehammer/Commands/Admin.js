@@ -315,7 +315,7 @@ module.exports = {
 			if(Args.length >= 1){
 				if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
 					if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("MANAGE_MESSAGES")){
-						let server = new Server(message.guild.id);
+						let server = new Server.Server(message.guild.id);
 						server.blacklistAdd(Args.join(" ")).then(() => {
 							message.channel.sendMessage(`:white_check_mark: Blacklisted \`${Args.join(" ")}\`.`);
 						}).catch((e) => {
@@ -342,7 +342,7 @@ module.exports = {
 			if(Args.length >= 1){
 				if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
 					if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("MANAGE_MESSAGES")){
-						let server = new Server(message.guild.id);
+						let server = new Server.Server(message.guild.id);
 						server.removeBlacklist(Args.join(" ")).then(() => {
 							message.channel.sendMessage(`:white_check_mark: Removed \`${Args.join(" ")}\` from the blacklist.`);
 						}).catch((e) => {

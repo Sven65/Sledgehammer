@@ -18,7 +18,7 @@ module.exports = {
 					if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_CHANNELS")){
 						if(message.guild.channels.find("id", Mentions.first().id).permissionsFor(Sledgehammer.user).hasPermission("SEND_MESSAGES")){
 							if(message.guild.channels.find("id", Mentions.first().id).permissionsFor(Sledgehammer.user).hasPermission("READ_MESSAGES")){
-								let server = new Server(message.guild.id);
+								let server = new Server.Server(message.guild.id);
 								server.setModlog(Mentions.first().id).then(() => {
 									message.channel.sendMessage(`:white_check_mark: Modlog channel set to <#${Mentions.first().id}>`)
 								}).catch((e) => {
@@ -449,6 +449,40 @@ module.exports = {
 								}else{
 									message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
 								}
+							break;
+
+							case "onblacklistdelete":
+								if(Args.length >= 2){
+									if(Args[1].toLowerCase() === "message"){
+										let channel = message.channel.id;
+										s.modlog.then((ml) => {
+											if(ml !== null){
+												channel = ml;
+											}
+
+											if(Channels.size >= 1){
+												channel = Channels.first().id;
+												Args.splice(Args.indexOf(`<#${channel}>`), 1);
+											}
+
+											Args.shift();
+											Args.shift();
+											let msg = Args.join(" ");
+											s.setBlacklistDelete(channel, msg).then(() => {
+												message.channel.sendMessage(`:white_check_mark: onBlacklistDelete message set to \`${msg}\`.`);
+											}).catch((e) => {
+												message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											});
+										}).catch((e) => {
+											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										});
+									}else{
+										message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									}
+								}else{
+									message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								}
+
 							break;
 
 							case "onemojicreate":
