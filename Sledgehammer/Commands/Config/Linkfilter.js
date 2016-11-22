@@ -8,7 +8,7 @@ module.exports = {
 			let s = new Server.Server(message.guild.id);
 			if(Mentions.size >= 1){
 				if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
-					if(message.guild.channels.find("id", Mentions.first().id).permissionsFor(Sledgehammer.user).hasPermission("MANAGE_MESSAGES")){
+					if(message.guild.channels.get(Mentions.first().id).permissionsFor(Sledgehammer.user).hasPermission("MANAGE_MESSAGES")){
 						if(Args[1] === undefined){
 							Args[1] = "";
 						}

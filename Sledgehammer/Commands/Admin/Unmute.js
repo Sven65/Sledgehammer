@@ -40,7 +40,7 @@ module.exports = {
 						s.muteRole.then((role) => {
 							if(role !== null){
 
-								if(message.guild.roles.find("id", role) !== null){
+								if(message.guild.roles.get(role) !== null){
 
 									Utils.Unmute(Mentions, message, role).then((Unmuted) => {
 										let toSend = "";
@@ -70,13 +70,13 @@ module.exports = {
 													if(messages !== null){
 														if(messages.unmutes !== null && messages.unmutes !== undefined){
 															if(messages.unmutes){
-																message.guild.channels.find("id", ml).sendMessage(toSend).catch((e) => {console.dir(e)});
+																message.guild.channels.get(ml).sendMessage(toSend).catch((e) => {console.dir(e)});
 															}
 														}else{
-															message.guild.channels.find("id", ml).sendMessage(toSend).catch((e) => {console.dir(e)});
+															message.guild.channels.get(ml).sendMessage(toSend).catch((e) => {console.dir(e)});
 														}
 													}else{
-														message.guild.channels.find("id", ml).sendMessage(toSend).catch((e) => {console.dir(e)});
+														message.guild.channels.get(ml).sendMessage(toSend).catch((e) => {console.dir(e)});
 													}
 												}).catch((e) => {console.dir(e)});
 

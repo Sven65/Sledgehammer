@@ -65,13 +65,13 @@ module.exports = {
 										if(messages !== null){
 											if(messages.ban !== null){
 												if(messages.ban){
-													message.guild.channels.find("id", ml).sendMessage(toSend);
+													message.guild.channels.get(ml).sendMessage(toSend);
 												}
 											}else{
-												message.guild.channels.find("id", ml).sendMessage(toSend);
+												message.guild.channels.get(ml).sendMessage(toSend);
 											}
 										}else{
-											message.guild.channels.find("id", ml).sendMessage(toSend);
+											message.guild.channels.get(ml).sendMessage(toSend);
 										}
 									});
 

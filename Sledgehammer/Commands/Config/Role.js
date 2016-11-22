@@ -23,7 +23,7 @@ module.exports = {
 								});
 							}
 							s.setRole("mute", roleID).then(() => {
-								message.channel.sendMessage(`:white_check_mark: Mute role set to ${message.guild.roles.find("id", roleID).name}`);
+								message.channel.sendMessage(`:white_check_mark: Mute role set to ${message.guild.roles.get(roleID).name}`);
 							}).catch((e) => {
 								message.channel.sendMessage(`:x: Something wen't wrong ${message.author.username}.`);
 							})
