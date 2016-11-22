@@ -4,6 +4,7 @@ const Token = require("./token.json").token;
 const fs = require("fs");
 const rethink = require('rethinkdb');
 const Handlers = require("./Handlers/Handlers.js");
+const path = require("path");
 
 global.Server = require("./Utils/Server/Index.js");
 global.DateFormat = require("./Utils/DateFormat.js");
@@ -64,19 +65,42 @@ const Utils = {
 		return new Promise((resolve, reject) => {
 			let Files = fs.readdirSync(__dirname+"/Commands");
 			for(let File of Files){
-				if(File.endsWith('.js')){
-					try{
-						Commands.all[File.slice(0, -3)] = require(__dirname+'/Commands/'+File);
-						if(Commands.all[File.slice(0, -3)].Metadata !== undefined){
-							for(let Command of Commands.all[File.slice(0, -3)].Metadata.List){
-								Commands.list[Command] = File.slice(0, -3);
+				fs.lstat(__dirname+"/Commands/"+File, (err, stat) => {
+					if(!stat.isDirectory()){
+						if(File.endsWith('.js')){
+							try{
+								Commands.all[File.slice(0, -3)] = require(__dirname+'/Commands/'+File);
+								if(Commands.all[File.slice(0, -3)].Metadata !== undefined){
+									for(let Command of Commands.all[File.slice(0, -3)].Metadata.List){
+										Commands.list[Command] = File.slice(0, -3);
+									}
+								}
+							}catch(e){
+								console.dir(e);
+								reject(e);
 							}
 						}
-					}catch(e){
-						console.dir(e);
-						reject(e);
+					}else{
+						let DirFiles = fs.readdirSync(__dirname+"/Commands/"+File);
+						for(let DirFile of DirFiles){
+							if(DirFile.endsWith('.js')){
+								try{
+									Commands.all[File] = require(__dirname+'/Commands/'+File+"/"+DirFile);
+									console.log("Loading "+DirFile)
+									console.dir(JSON.stringify(Commands));
+									/*if(Commands.all[File].Metadata !== undefined){
+										for(let Command of Commands.all[File.slice(0, -3)].Metadata.List){
+											Commands.list[Command] = File.slice(0, -3);
+										}
+									}*/
+								}catch(e){
+									console.dir(e);
+									reject(e);
+								}
+							}
+						}
 					}
-				}
+				});
 			}
 			resolve();
 		});
