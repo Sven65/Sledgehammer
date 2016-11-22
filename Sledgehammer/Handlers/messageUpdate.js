@@ -129,7 +129,7 @@ module.exports = {
 											if(ToSend.ShouldSend){
 												let Message = `Removed ${ToSend.Type} from ${ToSend.From.username} in ${ToSend.Channel}`;
 												if(Messages !== null){
-													if(messages.linkdelete){
+													if(Messages.linkdelete){
 														if(channels.linkLog !== null){
 															let toSend = channels.linkLog.message;
 															let time = new Date();

@@ -18,6 +18,7 @@ module.exports = {
 
 	guildUpdate: require("./guildUpdate.js"),
 	
+	messageCreate: require("./messageCreate.js"),
 	messageDelete: require("./messageDelete.js"),
 	messageUpdate: require("./messageUpdate.js"),
 	
