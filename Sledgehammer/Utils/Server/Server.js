@@ -200,6 +200,12 @@ module.exports = class Server{
 		}).run(Sledgehammer.rdb.conn);
 	}
 
+	setUserJoin(message){
+		return Sledgehammer.rdb.r.table("Servers").get(this.id).update({
+			joinMessage: message
+		}).run(Sledgehammer.rdb.conn)
+	}
+
 	// Getters
 
 	get exists(){
@@ -207,6 +213,11 @@ module.exports = class Server{
 		return Sledgehammer.rdb.r.table("Servers").filter(function(server){
 			return server("id").eq(id)
 		}).isEmpty().not().run(Sledgehammer.rdb.conn);
+	}
+
+	get userJoin(){
+		let id = this.id;
+		return Sledgehammer.rdb.r.table("Servers").get(this.id)("joinMessage").default(null).run(Sledgehammer.rdb.conn);
 	}
 
 	get blacklist(){

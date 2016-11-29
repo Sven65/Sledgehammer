@@ -50,6 +50,15 @@ module.exports = {
 									}).catch((e) => {
 										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
 									});
+								}else if(Args[1].toLowerCase() === "user"){
+									Args.shift();
+									Args.shift();
+									let msg = Args.join(" ");
+									s.setUserJoin(msg).then(() => {
+										message.channel.sendMessage(`:white_check_mark: onJoin message \`${msg}\` set to send to new users`);
+									}).catch((e) => {
+										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+									});
 								}else{
 									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}

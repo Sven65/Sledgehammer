@@ -24,6 +24,15 @@ module.exports = {
 									member.guild.channels.get(ModLog).sendMessage(Message);
 								}
 							}
+
+							if(messages.userjoin !== null){
+								if(messages.userjoin){
+									Guild.userJoin.then((message) => {
+										member.sendMessage(message);
+									});
+								}
+							}
+
 						}else{
 							if(ModLog !== null){
 								member.guild.channels.get(ModLog).sendMessage(Message);

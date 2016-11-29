@@ -26,6 +26,23 @@ module.exports = {
 								message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
 							}
 						break;
+						case "userjoin":
+							if(Args[1].toLowerCase() === "true"){
+								s.setMessage("userjoin", true).then(() => {
+									message.channel.sendMessage(`:white_check_mark: Messages will now be sent to users when they join.`);
+								}).catch((e) => {
+									message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								});
+							}else if(Args[1].toLowerCase() === "false"){
+								s.setMessage("userjoin", false).then(() => {
+									message.channel.sendMessage(`:white_check_mark: Messages will no longer be sent to users when they join.`);
+								}).catch((e) => {
+									message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								});
+							}else{
+								message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+							}
+						break;
 						case "leave":
 							if(Args[1].toLowerCase() === "true"){
 								s.setMessage("leave", true).then(() => {
