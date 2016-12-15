@@ -40,7 +40,7 @@ module.exports = {
 				let m = "```ini\n";
 				Sledgehammer.Commands.All.map((a) => {
 					let Group = Sledgehammer.Commands.Map[a];
-					if(x[Group] === undefined){
+					if(!Group in x){
 						x[Group] = [];
 					}
 
