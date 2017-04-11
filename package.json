@@ -22,7 +22,7 @@
   },
   "main": "Sledgehammer/main.js",
   "dependencies": {
-    "discord.js": "github:hydrabolt/discord.js#indev",
+    "discord.js": "github:hydrabolt/discord.js",
     "rethinkdb": "^2.3.3"
   }
 }
