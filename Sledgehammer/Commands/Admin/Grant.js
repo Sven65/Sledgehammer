@@ -14,7 +14,7 @@ module.exports = {
 					let user = Mentions.first();
 
 					if(user === undefined || user === null){
-						message.channel.sendMessage(`:x: Please mention a valid user, ${message.author.username}.`);
+						message.channel.send(`:x: Please mention a valid user, ${message.author.username}.`);
 						return;
 					}
 
@@ -24,13 +24,13 @@ module.exports = {
 						let node = Args.join(" ").toLowerCase();
 						if(Server.ACLNodes.indexOf(node) > -1){
 							ACL.AddNode(user.id, node).then(() => {
-								message.channel.sendMessage(`:white_check_mark: Added permission node \`${node}\` to ${user.username}.`);
+								message.channel.send(`:white_check_mark: Added permission node \`${node}\` to ${user.username}.`);
 							}).catch((e) => {
 								console.log(e.stack);
-								message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 							});
 						}else{
-							message.channel.sendMessage(`:x: Invalid permission node, ${message.author.username}.`);
+							message.channel.send(`:x: Invalid permission node, ${message.author.username}.`);
 						}
 					}else{
 						let NodesToAdd = [];
@@ -55,24 +55,24 @@ module.exports = {
 									}
 								});
 								ToSend += `to user ${user.username}.`;
-								message.channel.sendMessage(ToSend);
+								message.channel.send(ToSend);
 							}).catch((e) => {
 								console.log(e.stack);
-								message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+								message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 							});
 						}else{
-							message.channel.sendMessage(`:x: No valid permission nodes found, ${message.author.username}.`);
+							message.channel.send(`:x: No valid permission nodes found, ${message.author.username}.`);
 						}
 					}
 
 				}else{
-					message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to manage roles.`);
+					message.channel.send(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to manage roles.`);
 				}
 			}else{
-				message.channel.sendMessage(`:x: Please tell me who to add the permissions to, ${message.author.username}.`);
+				message.channel.send(`:x: Please tell me who to add the permissions to, ${message.author.username}.`);
 			}
 		}else{
-			message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+			message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 		}
 	},
 	Cooldown: 5,

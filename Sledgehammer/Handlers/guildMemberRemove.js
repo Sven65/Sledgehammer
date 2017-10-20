@@ -21,17 +21,17 @@ module.exports = {
 						if(messages.leave !== null){
 							if(messages.leave){
 								if(ModLog !== null){
-									member.guild.channels.get(ModLog).sendMessage(Message);
+									member.guild.channels.get(ModLog).send(Message);
 								}
 							}
 						}else{
 							if(ModLog !== null){
-								member.guild.channels.get(ModLog).sendMessage(Message);
+								member.guild.channels.get(ModLog).send(Message);
 							}
 						}
 					}else{
 						if(ModLog !== null){
-							member.guild.channels.get(ModLog).sendMessage(Message);
+							member.guild.channels.get(ModLog).send(Message);
 						}
 					}
 				}).catch((e) => {

@@ -22,12 +22,12 @@ module.exports = {
 				if(server.prefix !== null && server.prefix !== undefined){
 					toSend += `\n**❯ Prefix: ${server.prefix} ❮**`;
 				}
-				message.channel.sendMessage(toSend);
+				message.channel.send(toSend);
 			}else{
-				message.channel.sendMessage(`:x: This server doesn't have a configuration.`);
+				message.channel.send(`:x: This server doesn't have a configuration.`);
 			}
 		}).catch((e) => {
-			message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+			message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 		})
 	},
 	Cooldown: 5,

@@ -10,20 +10,20 @@ module.exports = {
 				if(user.roles.exists("name", "Sledgehammer Configurator")){
 					let prefix = Args.join(" ");
 					if(prefix.actualLength > 16){
-						message.channel.sendMessage(`:no_entry_sign: Sorry, ${message.author.username}, but a prefix can be a maximum of 16 characters.`);
+						message.channel.send(`:no_entry_sign: Sorry, ${message.author.username}, but a prefix can be a maximum of 16 characters.`);
 					}else{
 						s.setPrefix(prefix).then(() => {
-							message.channel.sendMessage(`:white_check_mark: Prefix for ${message.guild.name} set to \`${prefix}\``);
+							message.channel.send(`:white_check_mark: Prefix for ${message.guild.name} set to \`${prefix}\``);
 						}).catch((e) => {
-							message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+							message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 						});
 					}
 				}else{
-					message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You need a role called \`Sledgehammer Configurator\`.`);
+					message.channel.send(`:no_entry_sign: I can't let you do that, ${message.author.username}. You need a role called \`Sledgehammer Configurator\`.`);
 				}
 			});
 		}else{
-			message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+			message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 		}
 	},
 	Cooldown: 5,

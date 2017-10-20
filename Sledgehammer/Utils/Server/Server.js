@@ -29,9 +29,9 @@ module.exports = class Server{
 	sendModlog(message, text){
 		this.modlog.then((l) => {
 			if(l !== null){
-				message.guild.channels.find("id", l).sendMessage(text);
+				message.guild.channels.find("id", l).send(text);
 			}else{
-				message.channel.sendMessage(text);
+				message.channel.send(text);
 			}
 		});
 	}

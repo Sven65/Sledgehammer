@@ -43,27 +43,27 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setJoin(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onJoin message \`${msg}\` set to send in <#${channel}>`);
+											message.channel.send(`:white_check_mark: onJoin message \`${msg}\` set to send in <#${channel}>`);
 										}).catch((e) => {
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else if(Args[1].toLowerCase() === "user"){
 									Args.shift();
 									Args.shift();
 									let msg = Args.join(" ");
 									s.setUserJoin(msg).then(() => {
-										message.channel.sendMessage(`:white_check_mark: onJoin message \`${msg}\` set to send to new users`);
+										message.channel.send(`:white_check_mark: onJoin message \`${msg}\` set to send to new users`);
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 						break;
 
@@ -83,18 +83,18 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setLeave(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onLeave message \`${msg}\` set to send in <#${channel}>`);
+											message.channel.send(`:white_check_mark: onLeave message \`${msg}\` set to send in <#${channel}>`);
 										}).catch((e) => {
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 						break;
 
@@ -114,19 +114,19 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setKick(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onKick message \`${msg}\` set to send in <#${channel}>`);
+											message.channel.send(`:white_check_mark: onKick message \`${msg}\` set to send in <#${channel}>`);
 										}).catch((e) => {
 											console.dir(e);
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 						break;
 
@@ -146,19 +146,19 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setBan(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onBan message \`${msg}\` set to send in <#${channel}>`);
+											message.channel.send(`:white_check_mark: onBan message \`${msg}\` set to send in <#${channel}>`);
 										}).catch((e) => {
 											console.dir(e);
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 						break;
 
@@ -174,18 +174,18 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setUnban(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onUnban message set to \`${msg}\`.`);
+											message.channel.send(`:white_check_mark: onUnban message set to \`${msg}\`.`);
 										}).catch((e) => {
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 						break;
 
@@ -207,18 +207,18 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setMute(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onMute message set to \`${msg}\`.`);
+											message.channel.send(`:white_check_mark: onMute message set to \`${msg}\`.`);
 										}).catch((e) => {
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 						break;
 
@@ -240,18 +240,18 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setUnMute(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onUnMute message set to \`${msg}\`.`);
+											message.channel.send(`:white_check_mark: onUnMute message set to \`${msg}\`.`);
 										}).catch((e) => {
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 						break;
 
@@ -273,18 +273,18 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setLinkRemove(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onLinkRemove message set to \`${msg}\`.`);
+											message.channel.send(`:white_check_mark: onLinkRemove message set to \`${msg}\`.`);
 										}).catch((e) => {
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 						break;
 
@@ -306,18 +306,18 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setBlacklistDelete(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onBlacklistDelete message set to \`${msg}\`.`);
+											message.channel.send(`:white_check_mark: onBlacklistDelete message set to \`${msg}\`.`);
 										}).catch((e) => {
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 
 						break;
@@ -340,18 +340,18 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setEmojiCreate(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onEmojiCreate message set to \`${msg}\`.`);
+											message.channel.send(`:white_check_mark: onEmojiCreate message set to \`${msg}\`.`);
 										}).catch((e) => {
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 						break;
 
@@ -373,18 +373,18 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setEmojiDelete(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onEmojiDelete message set to \`${msg}\`.`);
+											message.channel.send(`:white_check_mark: onEmojiDelete message set to \`${msg}\`.`);
 										}).catch((e) => {
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 						break;
 
@@ -406,18 +406,18 @@ module.exports = {
 										Args.shift();
 										let msg = Args.join(" ");
 										s.setEmojiUpdate(channel, msg).then(() => {
-											message.channel.sendMessage(`:white_check_mark: onEmojiUpdate message set to \`${msg}\`.`);
+											message.channel.send(`:white_check_mark: onEmojiUpdate message set to \`${msg}\`.`);
 										}).catch((e) => {
-											message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+											message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 										});
 									}).catch((e) => {
-										message.channel.sendMessage(`:x: Something went wrong, ${message.author.username}.`);
+										message.channel.send(`:x: Something went wrong, ${message.author.username}.`);
 									});
 								}else{
-									message.channel.sendMessage(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
+									message.channel.send(":no_entry_sign: That's not a valid response type, ${message.author.username}.");
 								}
 							}else{
-								message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+								message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 							}
 						break;
 
@@ -454,11 +454,11 @@ module.exports = {
 						break;
 					}
 				}else{
-					message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You need a role called \`Sledgehammer Configurator\`.`);
+					message.channel.send(`:no_entry_sign: I can't let you do that, ${message.author.username}. You need a role called \`Sledgehammer Configurator\`.`);
 				}
 			});
 		}else{
-			message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+			message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 		}
 	},
 	Cooldown: 5,

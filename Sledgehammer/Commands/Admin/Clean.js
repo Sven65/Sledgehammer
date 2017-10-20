@@ -12,35 +12,9 @@ let Utils = {
 						}
 					}		
 				});
-				messages.map((ms) => {
-					if(User !== ""){
-						if(ms.author.id === User){
-							ms.delete().then(() => {
-								i++;
-								if(i === toClean || i === messages.size){
-									resolve(i);
-								}
-							}).catch((e) => {
-								i++;
-								if(i === toClean || i === messages.size){
-									resolve(i);
-								}
-							});	
-						}
-					}else{
-						ms.delete().then(() => {
-							i++;
-							if(i === Count || i === messages.size){
-								resolve(i);
-							}
-						}).catch((e) => {
-							i++;
-							if(i === Count || i === messages.size){
-								resolve(i);
-							}
-						});	
-					}
-				});
+				message.channel.bulkDelete(messages).then(deleted => {
+					resolve(deleted.size)
+				})
 			});
 		});
 	}
@@ -57,8 +31,8 @@ module.exports = {
 		if(Args.length >= 1){
 			purgeCount = parseInt(Args[0]) || 10;
 		}
-		if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
-			if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("MANAGE_MESSAGES")){
+		if(message.channel.permissionsFor(message.author).has("MANAGE_MESSAGES")){
+			if(message.channel.permissionsFor(Sledgehammer.user).has("MANAGE_MESSAGES")){
 				let user = "";
 				if(message.mentions.users.size >= 1){
 					user = message.mentions.users.first().id;
@@ -66,13 +40,13 @@ module.exports = {
 				let toSend = "";
 				Utils.Clean(message, purgeCount, user).then((Purged) => {
 					toSend = `Purged ${Purged.formatNumber()} messages in ${message.channel}.`;
-					message.channel.sendMessage(toSend);
+					message.channel.send(toSend);
 				});
 			}else{
-				message.channel.sendMessage(`:no_entry_sign: I can't do that, ${message.author.username}, I'm missing the permission to manage messages.`);
+				message.channel.send(`:no_entry_sign: I can't do that, ${message.author.username}, I'm missing the permission to manage messages.`);
 			}
 		}else{
-			message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to manage messages.`);
+			message.channel.send(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to manage messages.`);
 		}
 	},
 	Cooldown: 5,

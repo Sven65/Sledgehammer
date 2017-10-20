@@ -70,13 +70,13 @@ module.exports = {
 													if(messages !== null){
 														if(messages.mutes !== null && messages.mutes !== undefined){
 															if(messages.mutes){
-																message.guild.channels.get(ml).sendMessage(toSend).catch((e) => {console.dir(e)});
+																message.guild.channels.get(ml).send(toSend).catch((e) => {console.dir(e)});
 															}
 														}else{
-															message.guild.channels.get(ml).sendMessage(toSend).catch((e) => {console.dir(e)});
+															message.guild.channels.get(ml).send(toSend).catch((e) => {console.dir(e)});
 														}
 													}else{
-														message.guild.channels.get(ml).sendMessage(toSend).catch((e) => {console.dir(e)});
+														message.guild.channels.get(ml).send(toSend).catch((e) => {console.dir(e)});
 													}
 												}).catch((e) => {console.dir(e)});
 
@@ -84,20 +84,20 @@ module.exports = {
 										}).catch((e) => {console.dir(e)});
 									}).catch((e) => {console.dir(e)});
 								}else{
-									message.channel.sendMessage(`:x: Sorry, ${message.author.username}, but the role you set doesn't exist.`);
+									message.channel.send(`:x: Sorry, ${message.author.username}, but the role you set doesn't exist.`);
 								}
 							}else{
-								message.channel.sendMessage(`:no_entry_sign: Please set a role to add, ${message.author.username}.`);
+								message.channel.send(`:no_entry_sign: Please set a role to add, ${message.author.username}.`);
 							}
 						}).catch((e) => {console.dir(e)});
 					}else{
-						message.channel.sendMessage(`:no_entry_sign: I can't do that, ${message.author.username}, I'm missing the permission to manage roles.`);
+						message.channel.send(`:no_entry_sign: I can't do that, ${message.author.username}, I'm missing the permission to manage roles.`);
 					}
 				}else{
-					message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to manage roles.`);
+					message.channel.send(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to manage roles.`);
 				}
 			}else{
-				message.channel.sendMessage(`I can't do that, ${message.author.username},`)
+				message.channel.send(`I can't do that, ${message.author.username},`)
 			}
 		}
 	},

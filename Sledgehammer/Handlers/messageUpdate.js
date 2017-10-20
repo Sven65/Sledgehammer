@@ -48,7 +48,7 @@ module.exports = {
 											if(Messages !== null){
 												if(Messages.blacklistdelete !== null && Messages.blacklistdelete !== undefined){
 													if(Messages.blacklistdelete){
-														newMessage.guild.channels.get(ModLog).sendMessage(Message);
+														newMessage.guild.channels.get(ModLog).send(Message);
 													}
 												}
 											}
@@ -149,7 +149,7 @@ module.exports = {
 															ModLog = channels.linkLog.id;
 														}
 														if(ModLog !== null && ModLog !== undefined){
-															newMessage.guild.channels.get(ModLog).sendMessage(Message);
+															newMessage.guild.channels.get(ModLog).send(Message);
 														}
 													}
 												}

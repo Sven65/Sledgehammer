@@ -3,7 +3,7 @@ module.exports = {
 		if(message.author === Sledgehammer.user) return;
 
 		if(message.channel.type !== "text"){
-			message.channel.sendMessage(`Sorry, I don't respond to private messages.`);
+			message.channel.send(`Sorry, I don't respond to private messages.`);
 			return;
 		}
 
@@ -55,7 +55,7 @@ module.exports = {
 													if(Messages !== null){
 														if(Messages.blacklistdelete !== null && Messages.blacklistdelete !== undefined){
 															if(Messages.blacklistdelete){
-																message.guild.channels.get(ModLog).sendMessage(Message);
+																message.guild.channels.get(ModLog).send(Message);
 															}
 														}
 													}
@@ -79,7 +79,7 @@ module.exports = {
 												if(Messages !== null){
 													if(Messages.blacklistdelete !== null && Messages.blacklistdelete !== undefined){
 														if(Messages.blacklistdelete){
-															message.guild.channels.get(ModLog).sendMessage(Message);
+															message.guild.channels.get(ModLog).send(Message);
 														}
 													}
 												}
@@ -185,7 +185,7 @@ module.exports = {
 																ModLog = channels.linkLog.id;
 															}
 															if(ModLog !== null && ModLog !== undefined){
-																message.guild.channels.get(ModLog).sendMessage(Message);
+																message.guild.channels.get(ModLog).send(Message);
 															}
 														}
 													}
@@ -210,7 +210,7 @@ module.exports = {
 															let now = new Date().valueOf();
 															if(now <= lastExecTime+Sledgehammer.Utils.resolveCooldown(Command)*1000 && FirstTime){
 																let time = Math.round(((lastExecTime + Sledgehammer.Utils.resolveCooldown(Command) * 1000) - now) / 1000);
-																message.channel.sendMessage(`You need to calm down, ${message.author.username}. :hourglass: ${time} seconds`);
+																message.channel.send(`You need to calm down, ${message.author.username}. :hourglass: ${time} seconds`);
 															}else{
 																Args.shift();
 																Sledgehammer.Utils.resolveCommand(Command).Execute(Args, message);

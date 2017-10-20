@@ -21,17 +21,17 @@ module.exports = {
 						if(messages.unban !== null){
 							if(messages.unban){
 								if(ModLog !== null){
-									member.guild.channels.get(ModLog).sendMessage(Message);
+									member.guild.channels.get(ModLog).send(Message);
 								}
 							}
 						}else{
 							if(ModLog !== null){
-								member.guild.channels.get(ModLog).sendMessage(Message);
+								member.guild.channels.get(ModLog).send(Message);
 							}
 						}
 					}else{
 						if(ModLog !== null){
-							member.guild.channels.get(ModLog).sendMessage(Message);
+							member.guild.channels.get(ModLog).send(Message);
 						}
 					}
 				}).catch((e) => {

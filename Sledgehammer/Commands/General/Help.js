@@ -28,7 +28,7 @@ module.exports = {
 							}
 						}
 
-						message.channel.sendMessage(helpMsg);
+						message.channel.send(helpMsg);
 					}
 				}catch(e){
 					console.dir(e.stack);
@@ -40,7 +40,7 @@ module.exports = {
 				let m = "```ini\n";
 				Sledgehammer.Commands.All.map((a) => {
 					let Group = Sledgehammer.Commands.Map[a];
-					if(!Group in x){
+					if(!x.hasOwnProperty(Group)){
 						x[Group] = [];
 					}
 
@@ -61,8 +61,8 @@ module.exports = {
 
 				m += "```";
 				
-				message.channel.sendMessage(msg).then(() => {
-					message.author.sendMessage(m).catch((e) => {
+				message.channel.send(msg).then(() => {
+					message.author.send(m).catch((e) => {
 						console.dir(e);
 					});
 				}).catch((e) => {

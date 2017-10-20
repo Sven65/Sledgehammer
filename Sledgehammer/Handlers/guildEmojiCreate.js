@@ -23,21 +23,21 @@ module.exports = {
 						if(messages.emojicreate !== null){
 							if(messages.emojicreate){
 								if(ModLog !== null){
-									Emoji.guild.channels.get(ModLog).sendMessage(Message).catch((e) => {
+									Emoji.guild.channels.get(ModLog).send(Message).catch((e) => {
 										console.dir(e.stack);
 									})
 								}
 							}
 						}else{
 							if(ModLog !== null){
-								Emoji.guild.channels.get(ModLog).sendMessage(Message).catch((e) => {
+								Emoji.guild.channels.get(ModLog).send(Message).catch((e) => {
 									console.dir(e.stack);
 								})
 							}
 						}
 					}else{
 						if(ModLog !== null){
-							Emoji.guild.channels.get(ModLog).sendMessage(Message).catch((e) => {
+							Emoji.guild.channels.get(ModLog).send(Message).catch((e) => {
 								console.dir(e.stack);
 							})
 						}

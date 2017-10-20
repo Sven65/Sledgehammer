@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const Config = require("./Config.json");
-const Token = require("./token.json").token;
+const Token = Config.token;
 const fs = require("fs");
 const rethink = require('rethinkdb');
 const Handlers = require("./Handlers/Handlers.js");

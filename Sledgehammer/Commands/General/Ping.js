@@ -8,7 +8,7 @@ module.exports = {
 		let n = Date.now();
 		let id = message.author.id;
 		message.reply(`:hourglass:`).then((m) => {
-			let time = (m.createdTimestamp-n)/1000;
+			let time = (n-m.createdTimestamp)/1000;
 			m.edit(`<@${message.author.id}> :hourglass: ${time} seconds.`);
 		});
 	},

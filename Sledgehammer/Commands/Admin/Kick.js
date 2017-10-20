@@ -65,13 +65,13 @@ module.exports = {
 										if(messages !== null){
 											if(messages.kick !== null){
 												if(messages.kick){
-													message.guild.channels.get(ml).sendMessage(toSend);
+													message.guild.channels.get(ml).send(toSend);
 												}
 											}else{
-												message.guild.channels.get(ml).sendMessage(toSend);
+												message.guild.channels.get(ml).send(toSend);
 											}
 										}else{
-											message.guild.channels.get(ml).sendMessage(toSend);
+											message.guild.channels.get(ml).send(toSend);
 										}
 									});
 
@@ -79,13 +79,13 @@ module.exports = {
 							});
 						});
 					}else{
-						message.channel.sendMessage(`:no_entry_sign: I can't do that, ${message.author.username}, I'm missing the permission to kick members.`);
+						message.channel.send(`:no_entry_sign: I can't do that, ${message.author.username}, I'm missing the permission to kick members.`);
 					}
 				}else{
-					message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to kick members.`);
+					message.channel.send(`:no_entry_sign: I can't let you do that, ${message.author.username}. You don't have the permission to kick members.`);
 				}
 			}else{
-				message.channel.sendMessage(`I can't do that, ${message.author.username},`)
+				message.channel.send(`I can't do that, ${message.author.username},`)
 			}
 		}
 	},

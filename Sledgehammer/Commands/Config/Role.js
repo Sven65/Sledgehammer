@@ -23,21 +23,21 @@ module.exports = {
 								});
 							}
 							s.setRole("mute", roleID).then(() => {
-								message.channel.sendMessage(`:white_check_mark: Mute role set to ${message.guild.roles.get(roleID).name}`);
+								message.channel.send(`:white_check_mark: Mute role set to ${message.guild.roles.get(roleID).name}`);
 							}).catch((e) => {
-								message.channel.sendMessage(`:x: Something wen't wrong ${message.author.username}.`);
+								message.channel.send(`:x: Something wen't wrong ${message.author.username}.`);
 							})
 						break;
 						default:
-							message.channel.sendMessage(`:x: That's not a valid value, ${message.author.username}.`);
+							message.channel.send(`:x: That's not a valid value, ${message.author.username}.`);
 						break;
 					}
 				}else{
-					message.channel.sendMessage(`:no_entry_sign: I can't let you do that, ${message.author.username}. You need a role called \`Sledgehammer Configurator\`.`);
+					message.channel.send(`:no_entry_sign: I can't let you do that, ${message.author.username}. You need a role called \`Sledgehammer Configurator\`.`);
 				}
 			});
 		}else{
-			message.channel.sendMessage(`:x: Not enough arguments, ${message.author.username}.`);
+			message.channel.send(`:x: Not enough arguments, ${message.author.username}.`);
 		}
 	},
 	Cooldown: 5,
