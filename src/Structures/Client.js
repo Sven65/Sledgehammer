@@ -1,39 +1,53 @@
-const { Client } = require('discord.js')
-const Config = require('../config.json')
+import config from 'config';
+import Discord from 'discord.js';
 
-module.exports = class SledgeClient extends Client {
-    constructor() {
-        super({
-            //shardId: 0
-            //shardCount: Config.shards
-            disableEveryone: true,
-            messageSweepInterval: 60,
-            ws: {
-                large_threshold: 500
-            }
-        })
-        this.Config = Config
-    }
+class Client extends Discord.Client {
+	constructor() {
+		super({
+			disableEveryone: true
+		});
+		this.ready = false;
+		this.config = config;
+	}
 
-    login() {
-        super.login(this.Config.token)
-    }
+	async login() {
+		return await super.login(this.config.get('token'));
+	}
 
-    loaded(bool = null) {
-        if (typeof bool === 'boolean') {
-            this._loaded = bool
-            return
-        }
+	async _ready() {
+		console.log('[CLIENT] Connected.')
 
-        return this._loaded
-    }
+		this.CommandManager = new CommandManager(this);
+		this.CommandManager.init();
 
-    locked(bool = null) {
-        if (typeof bool === 'boolean') {
-            this._locked = bool
-            return
-        }
+		this.EventManager = new EventManager(this);
+		this.EventManager.init();
 
-        return this._locked
-    }
+		console.log([
+			`|-------------------------------------------`,
+			`| - = Client User = -`,
+			`| Username      :: ${this.user.username}`,
+			`| Discriminator :: ${this.user.discriminator}`,
+			`| ID            :: ${this.user.id}`,
+			`| Shard         :: ${this.shard.id}`,
+			`|-------------------------------------------`,
+			`| - = Current Statistics = -`,
+			`| Users         :: ${this.users.size-1}`,
+			`| Channels      :: ${this.channels.size}`,
+			`| Guilds        :: ${this.guilds.size}`,
+			`| Emojis        :: ${this.emojis.size}`,
+			`|-------------------------------------------`,
+			`| - = Framework Statistics = -`,
+			`| Commands :: ${this.CommandManager.store.size}`,
+			`| Events   :: ${this.EventManager.store.size}`,
+			`|-------------------------------------------`
+
+		])
+
+		this.ready = true;
+		this.emit('_ready');
+		console.log('[CLIENT] Ready.');
+	}
 }
+
+module.exports = Client;

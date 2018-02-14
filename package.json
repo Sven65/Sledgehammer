@@ -1,5 +1,5 @@
 {
-  "name": "Sledgehammer",
+  "name": "sledgehammer",
   "description": "The better, faster, more powerful banhammer.",
   "version": "0.0.1",
   "license": "Apache-2.0",
@@ -22,7 +22,10 @@
   },
   "main": "Sledgehammer/main.js",
   "dependencies": {
-    "discord.js": "11.2.1",
+    "discord.js": "11.3.0",
+    "rethinkdb": "^2.3.3"
+  },
+  "devDependencies": {
     "minimist": "1.2.0",
     "rethinkdbdash": "2.3.31",
     "snekfetch": "3.4.1"

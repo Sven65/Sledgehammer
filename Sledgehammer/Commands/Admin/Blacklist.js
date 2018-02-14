@@ -5,8 +5,8 @@ module.exports = {
 
 	Execute: (Args, message) => {
 		if(Args.length >= 1){
-			if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
-				if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("MANAGE_MESSAGES")){
+			if(message.channel.permissionsFor(message.author).has("MANAGE_MESSAGES")){
+				if(message.channel.permissionsFor(Sledgehammer.user).has("MANAGE_MESSAGES")){
 					let server = new Server.Server(message.guild.id);
 					server.blacklistAdd(Args.join(" ")).then(() => {
 						message.channel.send(`:white_check_mark: Blacklisted \`${Args.join(" ")}\`.`);

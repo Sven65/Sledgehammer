@@ -1,0 +1,14 @@
+{
+	"token": "",
+	"prefix": "=>",
+	"db": {
+		"user": "",
+		"password": "",
+		"servers": [{
+			"host": "",
+			"port": 28015
+		}],
+		"pingInterval": 10,
+		"timeout": 60
+	}
+}

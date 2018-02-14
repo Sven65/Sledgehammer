@@ -34,8 +34,8 @@ module.exports = {
 		if(Args.length >= 1){
 			let Mentions = message.mentions.users;
 			if(Mentions.size >= 1){
-				if(message.channel.permissionsFor(message.author).hasPermission("BAN_MEMBERS")){
-					if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("BAN_MEMBERS")){
+				if(message.channel.permissionsFor(message.author).has("BAN_MEMBERS")){
+					if(message.channel.permissionsFor(Sledgehammer.user).has("BAN_MEMBERS")){
 						let toSend = "";
 						let banner = message.author.username;
 						Utils.Ban(Mentions, message).then((Banned) => {

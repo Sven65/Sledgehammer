@@ -29,7 +29,7 @@ module.exports = {
 		}
 	},
 	Description: "Evaluates a query.",
-	Cooldown: 10,
+	Cooldown: 0,
 	Usage: "",
 	Unlisted: true
 };

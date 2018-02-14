@@ -1,14 +1,16 @@
-const path = require('path')
-const Event = require(path.join(__dirname, '../Structures/Event'))
+import { Event } from '../Structures';
 
-module.exports = class channelCreate extends Event {
-    constructor(client) {
-        super(client, path.join(__dirname, __filename), {
-            name: __filename.replace(/.js/, '')
-        })
-    }
+export default class extends Event {
+	constructor(client) {
+		super(client, __filename, {
+			name: "channelCreate"
+		})
+	}
 
-    handle(channel) {
-        
-    }
+	/**
+	 * @param {Channel} channel
+	 */
+	async handle(channel) {
+
+	}
 }

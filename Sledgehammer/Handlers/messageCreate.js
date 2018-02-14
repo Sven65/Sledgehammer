@@ -38,7 +38,7 @@ module.exports = {
 										if(message.content.replace(/\s\s+/g, " ").containsArray(Blacklist)){
 
 											if(Args[0].toLowerCase() === `${prefix}whitelist`){
-												if(ACLState && !ACL.checkACL(Nodes, ["messages.blacklist.ignore", "messages.blacklist.*", "messages.*", "messages.blacklist.manage"], "any") || !ACLState && !message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
+												if(ACLState && !ACL.checkACL(Nodes, ["messages.blacklist.ignore", "messages.blacklist.*", "messages.*", "messages.blacklist.manage"], "any") || !ACLState && !message.channel.permissionsFor(message.author).has("MANAGE_MESSAGES")){
 													let Message = `Removed message from ${message.author.username} (${message.author.id})`;
 													message.delete();
 													if(channels !== null){
@@ -62,7 +62,7 @@ module.exports = {
 												}
 											}
 
-											if(ACLState && !ACL.checkACL(Nodes, ["messages.blacklist.ignore", "messages.blacklist.*", "messages.*"], "any") || !ACLState && !message.channel.permissionsFor(message.author).hasPermission("MANAGE_MESSAGES")){
+											if(ACLState && !ACL.checkACL(Nodes, ["messages.blacklist.ignore", "messages.blacklist.*", "messages.*"], "any") || !ACLState && !message.channel.permissionsFor(message.author).has("MANAGE_MESSAGES")){
 												let Message = `Removed message from ${message.author.username} (${message.author.id})`;
 												message.delete();
 												if(channels !== null){
@@ -96,7 +96,7 @@ module.exports = {
 													ShouldSend: false
 												};
 												if(filter.type === "all"){
-													if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*"], "any") || !ACLState && !message.channel.permissionsFor(message.author).hasPermission("EMBED_LINKS")){
+													if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*"], "any") || !ACLState && !message.channel.permissionsFor(message.author).has("EMBED_LINKS")){
 												
 														let Regex = new RegExp(
 															"^" +
@@ -148,7 +148,7 @@ module.exports = {
 													if(message.channel !== null){
 														let Perms = message.channel.permissionsFor(message.author);
 														if(Perms !== null){
-															if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*", "messages.links.invite"], "any") || !ACLState && !Perms.hasPermission("EMBED_LINKS")){
+															if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*", "messages.links.invite"], "any") || !ACLState && !Perms.has("EMBED_LINKS")){
 																let Regex = new RegExp("(?:http\:\/\/)?(?:https\:\/\/)?discord.gg\/(?:[^\s]*)", "gi");
 																if(Regex.test(message.content)){
 																	message.delete();

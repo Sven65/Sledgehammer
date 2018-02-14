@@ -1,14 +1,16 @@
-const path = require('path')
-const Event = require(path.join(__dirname, '../Structures/Event'))
+import { Event } from '../Structures';
 
-module.exports = class guildDelete extends Event {
-    constructor(client) {
-        super(client, path.join(__dirname, __filename), {
-            name: __filename.replace(/.js/, '')
-        })
-    }
+export default class extends Event {
+	constructor(client) {
+		super(client, __filename, {
+			name: "guildDelete"
+		})
+	}
 
-    handle(guild) {
+	/**
+	 * @param {Eris.Guild} guild 
+	 */
+	async handle(guild) {
 
-    }
+	}
 }

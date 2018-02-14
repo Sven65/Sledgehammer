@@ -7,7 +7,7 @@ module.exports = {
 		if(Args.length >= 2){
 			let Mentions = message.mentions.users;
 			if(Mentions.size >= 1){
-				if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_ROLES_OR_PERMISSIONS")){
+				if(message.channel.permissionsFor(message.author).has("MANAGE_ROLES_OR_PERMISSIONS")){
 					let s = new Server.Server(message.guild.id);
 					let ACL = new Server.ACL(s);
 

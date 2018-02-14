@@ -1,100 +1,71 @@
-module.exports = class {
-    constructor(id) {
-        this.id = id
-    }
+const r = require('../../Util/DB');
 
-    setJoin(channel, message) {
-        return r.table('servers').get(this.id).update({
-            channels: {
+/**
+ * @class
+ * @memberof Server
+ */
+class Modlog {
+	/**
+	 * @constructor
+	 * @param {String} id 
+	 */
+	constructor(id) {
+		this.id = id;
+	}
 
-            }
-        })
-    }
+	/**
+	 * @param {String} type
+	 * @returns {Promise<Server.LogType>}
+	 */
+	async getLogType(type) {
+		return await r.table('servers').get(this.id)('channels')(type).default(null).run();
+	}
 
-    setKick(channel, message) {
-        return r.table('servers').get(this.id).update({
-            channels: {
-                kickLog: {
-                    id: channel,
-                    message: message
-                }
-            }
-        }).run()
-    }
+	/**
+	 * @param {String} type
+	 * @returns {Promise<Server.MessageType>}
+	 */
+	async getMessageType(type) {
+		return await r.table('servers').get(this.id)('messages')(type).default(null).run();
+	}
 
-    setUnban(channel, message) {
-        return r.table('servers').get(this.id).update({
-            channels: {
-                unbanLog
-            }
-        })
-    }
+	/**
+	 * @param {String} type
+	 * @returns {Promise<Server.RoleType>}
+	 */
+	async getRoleType(type) {
+		return await r.table('servers').get(this.id)('roles')(type).default(null).run();
+	}
 
-    setBan(channel, message) {
-        return r.table('servers').get(this.id)
-    }
+	/**
+	 * 
+	 * @param {String} type
+	 * @param {Server.LogType} data
+	 * @returns {Promise<Cursor>}
+	 */
+	async setLogType(type, data) {
+		return await r.table('servers').get(this.id).update({ logs: { [type]: data } }).run();
+	}
 
-    setMute(channel, message) {
-        return r.table('servers').get(this.id)
-    }
+	/**
+	 * 
+	 * @param {String} type
+	 * @param {Server.MessageType} data
+	 * @returns {Promise<Cursor>}
+	 */
+	async setMessageType(type, data) {
+		return await r.table('servers').get(this.id).update({ messages: { [type]: data } }).run();
+	}
 
-    setBlacklistDelete(channel, message) {
-        return r.table('servers').get(this.id)
-    }
-
-    setUnMute(channel, message) {
-        return r.table('servers').get(this.id)
-    }
-
-    setMessage(type, value) {
-        return r.table('servers').get(this.id)
-    }
-
-    setLeave(channel, message) {
-        return r.table('servers').get(this.id)
-    }
-
-    setRole(role, id) {
-        return r.table('servers').get(this.id)
-    }
-
-    setLinkRemove(channel, message) {
-        return r.table('servers').get(this.id)
-    }
-
-    setEmojiCreate(channel, message) {
-        return r.table('servers').get(this.id)
-    }
-
-    setEmojiDelete(channel, message) {
-        return r.table('servers').get(this.id)
-    }
-
-    setEmojiUpdate(channel, message) {
-        return r.table('servers').get(this.id)
-    }
-
-    setUserJoin(message) {
-        return r.table('servers').get(this.id)
-    }
-
-    get userJoin() {
-        return r.table('servers').get(this.id)
-    }
-
-    get modlog() {
-        return r.table('servers').get(this.id)
-    }
-
-    get joinLog() {
-        return r.table('servers').get(this.id)
-    }
-
-    get leaveLog() {
-        return r.table('servers').get(this.id)
-    }
-
-    get muteRole() {
-        return r.table('servers').get(this.id)
-    }
+	/**
+	 * 
+	 * @param {String} type
+	 * @param {Server.RoleType} data
+	 * @returns {Promise<Cursor>}
+	 */
+	async setRoleType(type, data) {
+		return await r.table('servers').get(this.id).update({ roles: { [type]: data } }).run();
+	}
 }
+
+module.exports = Modlog;

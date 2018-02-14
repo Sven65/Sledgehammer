@@ -7,9 +7,9 @@ module.exports = {
 		if(Args.length >= 1){
 			let Mentions = message.mentions.channels;
 			if(Mentions.size >= 1){
-				if(message.channel.permissionsFor(message.author).hasPermission("MANAGE_CHANNELS")){
-					if(message.guild.channels.get(Mentions.first().id).permissionsFor(Sledgehammer.user).hasPermission("SEND_MESSAGES")){
-						if(message.guild.channels.get(Mentions.first().id).permissionsFor(Sledgehammer.user).hasPermission("READ_MESSAGES")){
+				if(message.channel.permissionsFor(message.author).has("MANAGE_CHANNELS")){
+					if(message.guild.channels.get(Mentions.first().id).permissionsFor(Sledgehammer.user).has("SEND_MESSAGES")){
+						if(message.guild.channels.get(Mentions.first().id).permissionsFor(Sledgehammer.user).has("READ_MESSAGES")){
 							let server = new Server.Server(message.guild.id);
 							server.setModlog(Mentions.first().id).then(() => {
 								message.channel.send(`:white_check_mark: Modlog channel set to <#${Mentions.first().id}>`)

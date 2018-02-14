@@ -31,7 +31,7 @@ module.exports = {
 
 									if(newMessage.content.replace(/\s\s+/g, " ").containsArray(Blacklist)){
 
-										if(ACLState && !ACL.checkACL(Nodes, ["messages.blacklist.ignore", "messages.blacklist.*", "messages.*"], "any") || !ACLState && !newMessage.channel.permissionsFor(newMessage.author).hasPermission("MANAGE_MESSAGES")){
+										if(ACLState && !ACL.checkACL(Nodes, ["messages.blacklist.ignore", "messages.blacklist.*", "messages.*"], "any") || !ACLState && !newMessage.channel.permissionsFor(newMessage.author).has("MANAGE_MESSAGES")){
 											let Message = `Removed message from ${newMessage.author.username} (${newMessage.author.id})`;
 											newMessage.delete();
 											if(channels !== null){
@@ -65,7 +65,7 @@ module.exports = {
 												ShouldSend: false
 											};
 											if(filter.type === "all"){
-												if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*"], "any") || !ACLState && !newMessage.channel.permissionsFor(newMessage.author).hasPermission("EMBED_LINKS")){
+												if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*"], "any") || !ACLState && !newMessage.channel.permissionsFor(newMessage.author).has("EMBED_LINKS")){
 											
 													let Regex = new RegExp(
 														"^" +
@@ -114,7 +114,7 @@ module.exports = {
 
 												}
 											}else if(filter.type === "invite" || filter.type === "invites"){
-												if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*", "messages.links.invite"], "any") || !ACLState && !newMessage.channel.permissionsFor(newMessage.author).hasPermission("EMBED_LINKS")){
+												if(ACLState && !ACL.checkACL(Nodes, ["messages.links.embed", "messages.links.*", "messages.*", "messages.links.invite"], "any") || !ACLState && !newMessage.channel.permissionsFor(newMessage.author).has("EMBED_LINKS")){
 													let Regex = new RegExp("(?:http\:\/\/)?(?:https\:\/\/)?discord.gg\/(?:[^\s]*)", "gi");
 													if(Regex.test(newMessage.content)){
 														message.delete();

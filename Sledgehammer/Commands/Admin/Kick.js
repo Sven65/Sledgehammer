@@ -33,8 +33,8 @@ module.exports = {
 		if(Args.length >= 1){
 			let Mentions = message.mentions.users;
 			if(Mentions.size >= 1){
-				if(message.channel.permissionsFor(message.author).hasPermission("KICK_MEMBERS")){
-					if(message.channel.permissionsFor(Sledgehammer.user).hasPermission("KICK_MEMBERS")){
+				if(message.channel.permissionsFor(message.author).has("KICK_MEMBERS")){
+					if(message.channel.permissionsFor(Sledgehammer.user).has("KICK_MEMBERS")){
 						let toSend = "";
 						Utils.Kick(Mentions, message).then((Kicked) => {
 							let s = new Server.Server(message.guild.id);

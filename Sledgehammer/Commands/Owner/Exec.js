@@ -16,7 +16,7 @@ module.exports = {
                     if (stderr) message.channel.send("```sh\n" + stderr + "```");
                     let end = new Date().getTime()
                     let time = end - start
-                    message.channel.send("Time taken: " + (time / 1000) + + " seconds\n```sh\n" + stdout + "```")
+                    message.channel.send("Time taken: " + (time / 1000) + "```" + " seconds\n```sh\n" + stdout + "```")
                 })
 
             } catch (e) {
